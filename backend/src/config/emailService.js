@@ -38,8 +38,7 @@ const createTransporter = () => {
 const sendOtpEmail = async ({ toEmail, toName, otp, expiryMinutes = 2 }) => {
   // If email credentials are not configured, log to console (dev mode)
   if (!emailUser || !emailPass) {
-    console.log('⚠️  EMAIL NOT CONFIGURED — OTP (dev mode):', otp);
-    console.log('   Set EMAIL_USER and EMAIL_PASS in your .env file to send real emails.');
+    console.warn('⚠️  EMAIL NOT CONFIGURED: Cannot send OTP. Set EMAIL_USER and EMAIL_PASS in .env.');
     return { success: true, devMode: true, otp };
   }
 

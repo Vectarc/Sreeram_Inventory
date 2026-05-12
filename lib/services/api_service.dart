@@ -17,7 +17,7 @@ class ApiService {
   //   ↑ You MUST deploy the backend to a public server (e.g. Railway, Render,
   //     DigitalOcean) and set this URL to your real HTTPS server URL.
   // ─────────────────────────────────────────────────────────────────
-  static const String baseUrl = 'http://192.168.1.2:5000/api';
+  static const String baseUrl = 'https://sreeram-inventory.onrender.com/api';
   //                                     ↑ CHANGE THIS before building release APK!
   static String get imageBaseUrl => baseUrl.replaceAll('/api', '');
 

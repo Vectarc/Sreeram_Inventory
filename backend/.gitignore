@@ -1,0 +1,7 @@
+# Node.js
+node_modules/
+.env
+
+# Local uploads (don't commit these)
+uploads/
+*.log

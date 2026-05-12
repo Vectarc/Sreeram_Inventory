@@ -50,3 +50,11 @@ app.*.map.json
 android/key.properties
 android/app/*.jks
 android/app/*.keystore
+
+# ── Custom Ignores ──────────────────────────────────────────────────────────
+.env
+backend/.env
+**/node_modules/
+**/uploads/
+*.log
+

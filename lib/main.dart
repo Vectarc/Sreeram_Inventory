@@ -102,17 +102,12 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late AnimationController _rotateController;
   late AnimationController _loaderController;
   late AnimationController _fadeController;
 
   @override
   void initState() {
     super.initState();
-    _rotateController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 10),
-    )..repeat();
     _loaderController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1800),
@@ -126,7 +121,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _rotateController.dispose();
     _loaderController.dispose();
     _fadeController.dispose();
     super.dispose();
@@ -212,28 +206,21 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Spinning rainbow ring with logo
-                  AnimatedBuilder(
-                    animation: _rotateController,
-                    builder: (ctx, child) => Transform.rotate(
-                      angle: _rotateController.value * 2 * math.pi,
-                      child: child,
+                  // Rainbow ring with logo
+                  Container(
+                    width: 110, height: 110,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: AppColors.logoSweep,
                     ),
                     child: Container(
-                      width: 110, height: 110,
-                      decoration: const BoxDecoration(
+                      margin: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: AppColors.logoSweep,
-                      ),
-                      child: Container(
-                        margin: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark ? Colors.white : Colors.white,
-                          image: const DecorationImage(
-                            image: AssetImage('assets/logo.png'),
-                            fit: BoxFit.contain,
-                          ),
+                        color: isDark ? Colors.white : Colors.white,
+                        image: const DecorationImage(
+                          image: AssetImage('assets/logo.png'),
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

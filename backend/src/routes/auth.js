@@ -295,10 +295,9 @@ router.post('/admin/forgot-password', async (req, res) => {
     }
 
     if (emailResult.devMode) {
-      console.log(`\n📧 DEV MODE — OTP for admin password reset: ${otp}\n`);
       return res.json({
         success: true,
-        message: `⚠️ Email not configured (dev mode). OTP printed to server console.`,
+        message: `⚠️ Email not configured (dev mode). Check server configuration.`,
         devOtp: otp,
         sentTo: targetEmail,
       });

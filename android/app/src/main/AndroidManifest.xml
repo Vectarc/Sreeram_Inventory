@@ -8,13 +8,7 @@
     <application
         android:label="Sree Ram Company"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
-        <!--
-          android:usesCleartextTraffic="true"  ← Allows HTTP (not just HTTPS).
-          Needed when your backend runs on http://192.168.x.x:5000 (local network).
-          Remove this line when you deploy to a real HTTPS server in production.
-        -->
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

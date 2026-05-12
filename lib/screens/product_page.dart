@@ -354,7 +354,7 @@ class _ProductPageState extends State<ProductPage> {
                                             ),
                                             child: ApiService.getFullImageUrl(existing!['imageUrl']) != null
                                                 ? Image.network(
-                                                    ApiService.getFullImageUrl(existing!['imageUrl'])!,
+                                                    ApiService.getFullImageUrl(existing['imageUrl'])!,
                                                     fit: BoxFit.cover,
                                                   )
                                                 : _imagePlaceholder(isDark),

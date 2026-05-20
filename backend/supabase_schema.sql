@@ -72,6 +72,7 @@ CREATE TABLE contacts (
   phone TEXT NOT NULL,
   email TEXT,
   category TEXT NOT NULL,
+  description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()

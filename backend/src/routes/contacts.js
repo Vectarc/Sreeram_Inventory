@@ -47,11 +47,11 @@ router.use(protect);
 // CREATE CONTACT
 router.post('/', async (req, res) => {
   try {
-    const { name, role, phone, email, category } = req.body;
+    const { name, role, phone, email, category, description } = req.body;
     if (!name || !phone || !category)
       return res.status(400).json({ success: false, message: 'name, phone, and category are required.' });
     
-    const { data: contact, error } = await supabase.from('contacts').insert([{ name, role, phone, email, category }]).select().single();
+    const { data: contact, error } = await supabase.from('contacts').insert([{ name, role, phone, email, category, description }]).select().single();
     if (error) throw error;
     res.status(201).json({ success: true, message: 'Contact created.', contact: mapContactToFrontend(contact) });
   } catch (err) {
@@ -63,12 +63,13 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const updateData = {};
-    const { name, role, phone, email, category, isActive } = req.body;
+    const { name, role, phone, email, category, description, isActive } = req.body;
     if (name !== undefined) updateData.name = name;
     if (role !== undefined) updateData.role = role;
     if (phone !== undefined) updateData.phone = phone;
     if (email !== undefined) updateData.email = email;
     if (category !== undefined) updateData.category = category;
+    if (description !== undefined) updateData.description = description;
     if (isActive !== undefined) updateData.is_active = isActive;
     
     const { data: contact, error } = await supabase.from('contacts').update(updateData).eq('id', req.params.id).select().maybeSingle();

@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Sree Ram Company',
+      title: 'SRDC',
       themeMode: themeProvider.themeMode,
 
       // ── DARK THEME ───────────────────────────────────────────
@@ -231,7 +231,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ShaderMask(
                     shaderCallback: (b) => AppColors.rainbow.createShader(b),
                     child: Text(
-                      'Sree Ram Company',
+                      'SRDC',
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontSize: 22,

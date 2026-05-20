@@ -10,7 +10,8 @@ import 'login_page.dart';
 
 class UserDashboard extends StatelessWidget {
   final String username;
-  const UserDashboard({super.key, required this.username});
+  final String branch;
+  const UserDashboard({super.key, required this.username, required this.branch});
 
   Future<void> _logout(BuildContext context, bool isDark) async {
     final confirm = await showDialog<bool>(
@@ -201,7 +202,7 @@ class UserDashboard extends StatelessWidget {
             // Stock tile
             GestureDetector(
               onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const StockPage())),
+                  MaterialPageRoute(builder: (_) => StockPage(branch: branch))),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),

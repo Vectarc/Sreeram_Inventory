@@ -17,7 +17,8 @@ const mapUserToFrontend = (user) => {
     ...user,
     _id: user.id,
     isActive: user.is_active,
-    displayPassword: user.display_password
+    displayPassword: user.display_password,
+    branch: user.branch
   };
 };
 
@@ -58,9 +59,9 @@ router.post('/admin/login', async (req, res) => {
 // ─────────────────────────────────────────
 router.post('/user/signup', protect, adminOnly, async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password)
-      return res.status(400).json({ success: false, message: 'Username and password are required.' });
+    const { username, password, branch } = req.body;
+    if (!username || !password || !branch)
+      return res.status(400).json({ success: false, message: 'Username, password, and branch are required.' });
 
     if (password.length < 6)
       return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.' });
@@ -74,7 +75,8 @@ router.post('/user/signup', protect, adminOnly, async (req, res) => {
     const { data: user, error } = await supabase.from('users').insert([{ 
       username, 
       password: hashedPassword,
-      display_password: password
+      display_password: password,
+      branch
     }]).select().single();
     if (error) throw error;
 
@@ -110,7 +112,7 @@ router.post('/user/login', async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ success: false, message: 'Incorrect password.' });
 
-    const token = generateToken({ id: user.id, username: user.username, role: 'user' });
+    const token = generateToken({ id: user.id, username: user.username, role: 'user', branch: user.branch });
 
     res.json({
       success: true,

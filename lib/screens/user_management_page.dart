@@ -6,6 +6,7 @@ import '../widgets/theme_toggle.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 import '../widgets/app_notifications.dart';
+import '../widgets/searchable_dropdown.dart';
 
 class UserManagementPage extends StatefulWidget {
   const UserManagementPage({super.key});
@@ -15,12 +16,25 @@ class UserManagementPage extends StatefulWidget {
 
 class _UserManagementPageState extends State<UserManagementPage> {
   List<Map<String, dynamic>> _users = [];
+  List<String> _branches = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadBranches();
     _loadUsers();
+  }
+
+  Future<void> _loadBranches() async {
+    final result = await ApiService.getBranches();
+    if (result['success'] == true && mounted) {
+      setState(() {
+        _branches = (result['branches'] as List)
+            .map((b) => b['name'].toString())
+            .toList();
+      });
+    }
   }
 
   Future<void> _loadUsers() async {
@@ -38,6 +52,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     final isDark = context.read<ThemeProvider>().isDark;
     final userCtrl = TextEditingController();
     final passCtrl = TextEditingController();
+    String? selectedBranch = _branches.isNotEmpty ? _branches[0] : null;
     bool saving = false;
     bool obscure = true;
 
@@ -117,6 +132,18 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   ),
                 ),
               ),
+              if (_branches.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                SearchableDropdown<String>(
+                  label: 'Assign Branch',
+                  value: selectedBranch,
+                  items: _branches,
+                  itemAsString: (v) => v,
+                  onChanged: (v) => ss(() => selectedBranch = v),
+                  isDark: isDark,
+                  prefixIcon: Icons.storefront_outlined,
+                ),
+              ],
             ],
           ),
           actions: [
@@ -144,10 +171,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
                           AppNotifications.showWarning(context, 'Username required, password min 6 chars');
                           return;
                         }
+                        if (selectedBranch == null) {
+                          AppNotifications.showWarning(context, 'Please select a branch');
+                          return;
+                        }
                         ss(() => saving = true);
                         final res = await ApiService.createUser({
                           'username': userCtrl.text.trim(),
                           'password': passCtrl.text.trim(),
+                          'branch': selectedBranch,
                         });
                         ss(() => saving = false);
                         if (res['success'] == true) {
@@ -618,6 +650,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                         .toUpperCase(),
                                     isAdmin ? AppColors.violet : AppColors.blue,
                                   ),
+                                  if (u['branch'] != null)
+                                    _badge(
+                                      isDark,
+                                      u['branch'],
+                                      AppColors.indigo,
+                                    ),
                                   _badge(
                                     isDark,
                                     isActive ? 'Active' : 'Inactive',

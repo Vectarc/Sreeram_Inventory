@@ -30,7 +30,9 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
     setState(() {
       _loading = false;
       if (result['success'] == true) {
-        _contacts = List<Map<String, dynamic>>.from(result['contacts'] ?? []);
+        final allContacts = List<Map<String, dynamic>>.from(result['contacts'] ?? []);
+        final allowed = ['Transport', 'Services', 'Staff', 'Management'];
+        _contacts = allContacts.where((c) => allowed.contains(c['category'])).toList();
       } else {
         _error = result['message'];
       }
@@ -160,6 +162,10 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
                                   child: Text(c['category'] ?? '', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 10, color: color, fontWeight: FontWeight.w700))),
                               ),
                             ]),
+                            if ((c['description'] ?? '').isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              _labelRow(isDark, 'Description', c['description'] ?? '', AppColors.textSecondary(isDark)),
+                            ],
                           ])),
                         ])),
                       );

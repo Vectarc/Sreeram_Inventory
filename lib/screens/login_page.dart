@@ -88,7 +88,10 @@ class _LoginPageState extends State<LoginPage>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => UserDashboard(username: result['user']['username']),
+          builder: (_) => UserDashboard(
+            username: result['user']['username'],
+            branch: result['user']['branch'] ?? 'Main Branch',
+          ),
         ),
       );
     } else {

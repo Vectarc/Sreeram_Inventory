@@ -30,6 +30,7 @@ CREATE TABLE users (
   password TEXT NOT NULL,
   display_password TEXT,
   role TEXT DEFAULT 'user',
+  branch TEXT NOT NULL DEFAULT 'Main Branch',
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT now()
 );

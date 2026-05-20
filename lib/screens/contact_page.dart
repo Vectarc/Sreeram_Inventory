@@ -23,6 +23,9 @@ class _ContactPageState extends State<ContactPage> {
     'Services',
     'Staff',
     'Management',
+    'Import',
+    'local supplier',
+    'Non TN Supplier',
   ];
   String _selected = 'All';
 
@@ -58,8 +61,9 @@ class _ContactPageState extends State<ContactPage> {
     final roleCtrl = TextEditingController(text: existing?['role'] ?? '');
     final phoneCtrl = TextEditingController(text: existing?['phone'] ?? '');
     final emailCtrl = TextEditingController(text: existing?['email'] ?? '');
+    final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     String category = existing?['category'] ?? 'Staff';
-    final validCats = ['Transport', 'Services', 'Staff', 'Management'];
+    final validCats = ['Transport', 'Services', 'Staff', 'Management', 'Import', 'local supplier', 'Non TN Supplier'];
     if (!validCats.contains(category)) category = 'Staff';
     bool saving = false;
 
@@ -134,6 +138,15 @@ class _ContactPageState extends State<ContactPage> {
                   AppColors.blue,
                 ),
                 const SizedBox(height: 12),
+                _tf(
+                  isDark,
+                  descCtrl,
+                  'Description',
+                  Icons.description_outlined,
+                  AppColors.orange,
+                  maxLines: null,
+                ),
+                const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   isExpanded: true,
                   initialValue: category,
@@ -188,6 +201,7 @@ class _ContactPageState extends State<ContactPage> {
                           'phone': phoneCtrl.text.trim(),
                           'email': emailCtrl.text.trim(),
                           'category': category,
+                          'description': descCtrl.text.trim(),
                         };
                         final result = existing == null
                             ? await ApiService.createContact(data)
@@ -295,6 +309,12 @@ class _ContactPageState extends State<ContactPage> {
         return AppColors.violet;
       case 'Management':
         return AppColors.orange;
+      case 'Import':
+        return Colors.teal;
+      case 'local supplier':
+        return Colors.indigo;
+      case 'Non TN Supplier':
+        return Colors.brown;
       default:
         return Colors.grey;
     }
@@ -312,6 +332,12 @@ class _ContactPageState extends State<ContactPage> {
         return Icons.person;
       case 'Management':
         return Icons.manage_accounts;
+      case 'Import':
+        return Icons.flight_land;
+      case 'local supplier':
+        return Icons.storefront;
+      case 'Non TN Supplier':
+        return Icons.public;
       default:
         return Icons.person_outline;
     }
@@ -339,8 +365,11 @@ class _ContactPageState extends State<ContactPage> {
     String label,
     IconData icon,
     Color accent,
+    {int? maxLines = 1}
   ) => TextField(
     controller: c,
+    maxLines: maxLines,
+    keyboardType: maxLines == null ? TextInputType.multiline : TextInputType.text,
     style: TextStyle(color: AppColors.textPrimary(isDark)),
     decoration: InputDecoration(
       labelText: label,
@@ -698,6 +727,15 @@ class _ContactPageState extends State<ContactPage> {
                                                 ),
                                               ],
                                             ),
+                                            if ((c['description'] ?? '').isNotEmpty) ...[
+                                              const SizedBox(height: 5),
+                                              _labelRow(
+                                                isDark,
+                                                'Description',
+                                                c['description'] ?? '',
+                                                AppColors.textSecondary(isDark),
+                                              ),
+                                            ],
                                           ],
                                         ),
                                       ),

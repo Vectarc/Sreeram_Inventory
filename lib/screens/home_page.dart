@@ -127,11 +127,14 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text('Sree Ram Company',
-                            style: GoogleFonts.poppins(
-                                color: AppColors.textPrimary(isDark),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800)),
+                        Expanded(
+                          child: Text('SRDC',
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                  color: AppColors.textPrimary(isDark),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800)),
+                        ),
                         const Spacer(),
                         const ThemeToggleButton(),
                       ],
@@ -233,17 +236,7 @@ class _HomePageState extends State<HomePage> {
                                         shaderCallback: (b) => const LinearGradient(
                                           colors: [Color(0xFFE53935), Color(0xFFFB8C00)],
                                         ).createShader(b),
-                                        child: Text('Sree Ram',
-                                            style: GoogleFonts.poppins(
-                                                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
-                                      ),
-                                    ),
-                                    WidgetSpan(
-                                      child: ShaderMask(
-                                        shaderCallback: (b) => const LinearGradient(
-                                          colors: [Color(0xFF43A047), Color(0xFF00BCD4)],
-                                        ).createShader(b),
-                                        child: Text(' Company',
+                                        child: Text('SRDC',
                                             style: GoogleFonts.poppins(
                                                 color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
                                       ),
@@ -402,7 +395,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Text('© 2024 Sree Ram Company. All Rights Reserved.',
+                          Text('© 2024 SRDC. All Rights Reserved.',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                   color: AppColors.textMuted(isDark), fontSize: 10)),
@@ -609,7 +602,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text('Sree Ram Company',
+                Text('SRDC',
                     style: GoogleFonts.poppins(
                         color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 4),
@@ -648,7 +641,7 @@ class _HomePageState extends State<HomePage> {
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('© 2024 Sree Ram Company',
+            child: Text('© 2024 SRDC',
                 style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark))),
           ),
         ],

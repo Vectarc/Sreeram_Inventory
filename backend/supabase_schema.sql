@@ -82,16 +82,18 @@ CREATE TABLE contacts (
 CREATE TABLE products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
-  code TEXT UNIQUE NOT NULL,
+  code TEXT NOT NULL,
   unit TEXT DEFAULT 'KG',
   category TEXT NOT NULL,
+  branch TEXT NOT NULL,
   brand TEXT DEFAULT '',
   vendor TEXT DEFAULT '',
   image_url TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_by TEXT DEFAULT 'admin',
   created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(code, branch)
 );
 
 -- Stocks

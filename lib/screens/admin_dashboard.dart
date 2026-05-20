@@ -13,6 +13,7 @@ import 'branch_management_page.dart';
 import 'vendor_management_page.dart';
 import 'user_management_page.dart';
 import 'login_page.dart';
+import 'branch_selection_page.dart';
 import 'dart:async';
 import '../widgets/app_notifications.dart';
 
@@ -1426,7 +1427,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ProductPage(),
+                              builder: (_) => BranchSelectionPage(
+                                title: 'Products',
+                                isAdmin: true,
+                                builder: (branch) => ProductPage(branch: branch),
+                              ),
                             ),
                           ),
                         ),
@@ -1444,7 +1449,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const StockPage(),
+                                builder: (_) => BranchSelectionPage(
+                                  title: 'Stock Management',
+                                  isAdmin: true,
+                                  builder: (branch) => StockPage(branch: branch),
+                                ),
                               ),
                             );
                             _loadAlerts();
@@ -1467,7 +1476,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ProductListPage(),
+                              builder: (_) => BranchSelectionPage(
+                                title: 'Product List',
+                                isAdmin: true,
+                                builder: (branch) => ProductListPage(branch: branch),
+                              ),
                             ),
                           ),
                         ),

@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 
 class ProductListPage extends StatefulWidget {
-  const ProductListPage({super.key});
+  final String branch;
+  const ProductListPage({super.key, required this.branch});
   @override
   State<ProductListPage> createState() => _ProductListPageState();
 }
@@ -45,13 +46,13 @@ class _ProductListPageState extends State<ProductListPage> {
       _loading = true;
       _error = null;
     });
-    final result = await ApiService.getProducts();
+    final result = await ApiService.getProducts(branch: widget.branch);
     setState(() {
       _loading = false;
       if (result['success'] == true) {
         _allProducts = List<Map<String, dynamic>>.from(
           result['products'] ?? [],
-        ).map((p) => {...p, 'shop': 'All Branches'}).toList();
+        ).map((p) => {...p, 'shop': widget.branch}).toList();
       } else {
         _error = result['message'];
       }
@@ -87,7 +88,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   ),
                   Expanded(
                     child: Text(
-                      'Product List – All Shops',
+                      'Product List – ${widget.branch}',
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,

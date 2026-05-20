@@ -13,7 +13,8 @@ import '../widgets/searchable_dropdown.dart';
 import '../widgets/app_notifications.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  final String branch;
+  const ProductPage({super.key, required this.branch});
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
@@ -103,7 +104,7 @@ class _ProductPageState extends State<ProductPage> {
       _loading = true;
       _error = null;
     });
-    final result = await ApiService.getProducts();
+    final result = await ApiService.getProducts(branch: widget.branch);
     final vendorRes = await ApiService.getVendors();
     setState(() {
       _loading = false;
@@ -467,6 +468,7 @@ class _ProductPageState extends State<ProductPage> {
                                 ? null
                                 : webImageBytes,
                             'removeImage': imageRemoved,
+                            'branch': widget.branch,
                           });
                         } else {
                           result =
@@ -484,6 +486,7 @@ class _ProductPageState extends State<ProductPage> {
                                     ? null
                                     : webImageBytes,
                                 'removeImage': imageRemoved,
+                                'branch': widget.branch,
                               });
                         }
                         ss(() => saving = false);

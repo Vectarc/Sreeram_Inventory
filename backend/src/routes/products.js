@@ -34,7 +34,8 @@ const mapProductToFrontend = (p) => {
     _id: p.id,
     createdAt: p.created_at,
     updatedAt: p.updated_at,
-    createdBy: p.created_by
+    createdBy: p.created_by,
+    branch: p.branch
   };
 };
 
@@ -47,6 +48,7 @@ router.get('/', async (req, res) => {
   try {
     let query = supabase.from('products').select('*').order('created_at', { ascending: false });
     if (req.query.category) query = query.eq('category', req.query.category);
+    if (req.query.branch) query = query.eq('branch', req.query.branch);
     
     // If no token → only show active products
     if (req.query.isActive !== undefined) {
@@ -66,7 +68,10 @@ router.get('/', async (req, res) => {
 // GET PRODUCTS WITH STOCK INFO (all shops) — must be BEFORE /:id
 router.get('/list/all-shops', async (req, res) => {
   try {
-    const { data: stocks, error } = await supabase.from('stocks').select('*, product:products(*)');
+    let query = supabase.from('stocks').select('*, product:products(*)');
+    if (req.query.branch) query = query.eq('branch', req.query.branch);
+    
+    const { data: stocks, error } = await query;
     if (error) throw error;
     
     const result = stocks.map(s => ({
@@ -109,13 +114,13 @@ router.use(protect);
 // CREATE PRODUCT (admin only)
 router.post('/', adminOnly, upload.single('image'), async (req, res) => {
   try {
-    const { name, code, unit, category, brand, vendor } = req.body;
-    if (!name || !code || !unit || !category)
-      return res.status(400).json({ success: false, message: 'name, code, unit, and category are required.' });
+    const { name, code, unit, category, branch, brand, vendor } = req.body;
+    if (!name || !code || !unit || !category || !branch)
+      return res.status(400).json({ success: false, message: 'name, code, unit, category, and branch are required.' });
     
-    const { data: exists, error: checkError } = await supabase.from('products').select('id').ilike('code', code).maybeSingle();
+    const { data: exists, error: checkError } = await supabase.from('products').select('id').ilike('code', code).eq('branch', branch).maybeSingle();
     if (checkError) throw checkError;
-    if (exists) return res.status(409).json({ success: false, message: 'Product code already exists.' });
+    if (exists) return res.status(409).json({ success: false, message: 'Product code already exists in this branch.' });
 
     let imageUrl = null;
     if (req.file) {
@@ -141,6 +146,7 @@ router.post('/', adminOnly, upload.single('image'), async (req, res) => {
       code: code.toUpperCase(),
       unit,
       category,
+      branch,
       brand: brand || '',
       vendor: (vendor === 'null' || !vendor) ? '' : vendor,
       image_url: imageUrl,
@@ -158,7 +164,7 @@ router.post('/', adminOnly, upload.single('image'), async (req, res) => {
 router.put('/:id', adminOnly, upload.single('image'), async (req, res) => {
   try {
     const updateData = {};
-    const { name, code, unit, category, brand, isActive, vendor, removeImage } = req.body;
+    const { name, code, unit, category, branch, brand, isActive, vendor, removeImage } = req.body;
     
     // Fetch current product to handle old image deletion
     const { data: current, error: getError } = await supabase.from('products').select('*').eq('id', req.params.id).maybeSingle();
@@ -169,6 +175,7 @@ router.put('/:id', adminOnly, upload.single('image'), async (req, res) => {
     if (code !== undefined) updateData.code = code.toUpperCase();
     if (unit !== undefined) updateData.unit = unit;
     if (category !== undefined) updateData.category = category;
+    if (branch !== undefined) updateData.branch = branch;
     if (isActive !== undefined) updateData.is_active = isActive === 'true' || isActive === true;
     if (vendor !== undefined) {
       updateData.vendor = (vendor === 'null' || !vendor) ? '' : vendor;

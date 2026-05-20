@@ -10,7 +10,8 @@ import '../widgets/searchable_dropdown.dart';
 import '../widgets/app_notifications.dart';
 
 class StockPage extends StatefulWidget {
-  const StockPage({super.key});
+  final String branch;
+  const StockPage({super.key, required this.branch});
   @override
   State<StockPage> createState() => _StockPageState();
 }
@@ -64,7 +65,7 @@ class _StockPageState extends State<StockPage>
   }
 
   Future<void> _loadAllProducts() async {
-    final result = await ApiService.getProducts();
+    final result = await ApiService.getProducts(branch: widget.branch);
     if (result['success'] == true) {
       setState(() {
         _allProducts = List<Map<String, dynamic>>.from(
@@ -76,7 +77,7 @@ class _StockPageState extends State<StockPage>
 
   Future<void> _loadStocks() async {
     setState(() => _loadingStocks = true);
-    final result = await ApiService.getStocks();
+    final result = await ApiService.getStocks(branch: widget.branch);
     setState(() {
       _loadingStocks = false;
       if (result['success'] == true) {
@@ -134,12 +135,8 @@ class _StockPageState extends State<StockPage>
     final minLevelCtrl = TextEditingController(
       text: prefillMinLevel != null ? prefillMinLevel.toString() : '10',
     );
-    String branch = prefillBranch != null && _branches.contains(prefillBranch)
-        ? prefillBranch
-        : _branches[0];
-    String fromB = prefillBranch != null && _branches.contains(prefillBranch)
-        ? prefillBranch
-        : _branches[0];
+    String branch = widget.branch;
+    String fromB = widget.branch;
     String? toB; // Start as null for "Select Branch" placeholder
     String adjReason = 'Damaged';
     final adjReasons = ['Damaged', 'Expired', 'Lost', 'Other'];
@@ -329,6 +326,7 @@ class _StockPageState extends State<StockPage>
                       onChanged: (v) => ss(() => branch = v!),
                       isDark: isDark,
                       prefixIcon: Icons.storefront_outlined,
+                      enabled: false, // Locked to current branch
                     ),
                   const SizedBox(height: 12),
                   if (type == 'adjust') ...[

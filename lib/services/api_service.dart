@@ -129,11 +129,13 @@ class ApiService {
   // PRODUCTS
   // ─────────────────────────────────────────────────────────────────
 
-  static Future<Map<String, dynamic>> getProducts({String? category}) async {
+  static Future<Map<String, dynamic>> getProducts({String? category, String? branch}) async {
     try {
-      final q = category != null
-          ? '?category=${Uri.encodeComponent(category)}'
-          : '';
+      final List<String> queries = [];
+      if (category != null) queries.add('category=${Uri.encodeComponent(category)}');
+      if (branch != null) queries.add('branch=${Uri.encodeComponent(branch)}');
+      
+      final q = queries.isNotEmpty ? '?${queries.join('&')}' : '';
       final res = await http
           .get(Uri.parse('$baseUrl/products$q'), headers: _headers)
           .timeout(const Duration(seconds: 10));
@@ -301,10 +303,11 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, dynamic>> getAllShopsProducts() async {
+  static Future<Map<String, dynamic>> getAllShopsProducts({String? branch}) async {
     try {
+      final q = branch != null ? '?branch=${Uri.encodeComponent(branch)}' : '';
       final res = await http
-          .get(Uri.parse('$baseUrl/products/list/all-shops'), headers: _headers)
+          .get(Uri.parse('$baseUrl/products/list/all-shops$q'), headers: _headers)
           .timeout(const Duration(seconds: 10));
       return jsonDecode(res.body);
     } catch (e) {

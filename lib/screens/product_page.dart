@@ -124,6 +124,7 @@ class _ProductPageState extends State<ProductPage> {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     final codeCtrl = TextEditingController(text: existing?['code'] ?? '');
     final brandCtrl = TextEditingController(text: existing?['brand'] ?? '');
+    final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     String? unit = existing?['unit'];
     String? category = existing?['category'] ?? 'PLASTISOL';
 
@@ -243,6 +244,15 @@ class _ProductPageState extends State<ProductPage> {
                   'Brand Name',
                   Icons.branding_watermark_outlined,
                   AppColors.red,
+                ),
+                const SizedBox(height: 12),
+                _tf(
+                  isDark,
+                  descCtrl,
+                  'Description',
+                  Icons.description_outlined,
+                  AppColors.red,
+                  maxLines: null,
                 ),
                 const SizedBox(height: 12),
                 SearchableDropdown<String?>(
@@ -460,6 +470,7 @@ class _ProductPageState extends State<ProductPage> {
                             'unit': unit,
                             'category': category,
                             'brand': brandCtrl.text.trim(),
+                            'description': descCtrl.text.trim(),
                             'vendor': selectedVendorId,
                             'image': imageRemoved
                                 ? null
@@ -476,6 +487,7 @@ class _ProductPageState extends State<ProductPage> {
                                 'name': nameCtrl.text.trim(),
                                 'code': codeCtrl.text.trim(),
                                 'brand': brandCtrl.text.trim(),
+                                'description': descCtrl.text.trim(),
                                 'unit': unit,
                                 'category': category,
                                 'vendor': selectedVendorId,
@@ -977,9 +989,11 @@ class _ProductPageState extends State<ProductPage> {
     TextEditingController c,
     String label,
     IconData icon,
-    Color accent,
-  ) => TextField(
+    Color accent, {
+    int? maxLines = 1,
+  }) => TextField(
     controller: c,
+    maxLines: maxLines,
     style: TextStyle(color: AppColors.textPrimary(isDark)),
     decoration: InputDecoration(
       labelText: label,

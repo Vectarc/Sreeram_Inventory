@@ -114,7 +114,7 @@ router.use(protect);
 // CREATE PRODUCT (admin only)
 router.post('/', adminOnly, upload.single('image'), async (req, res) => {
   try {
-    const { name, code, unit, category, branch, brand, vendor } = req.body;
+    const { name, code, unit, category, branch, brand, vendor, description } = req.body;
     if (!name || !code || !unit || !category || !branch)
       return res.status(400).json({ success: false, message: 'name, code, unit, category, and branch are required.' });
     
@@ -149,6 +149,7 @@ router.post('/', adminOnly, upload.single('image'), async (req, res) => {
       branch,
       brand: brand || '',
       vendor: (vendor === 'null' || !vendor) ? '' : vendor,
+      description: description || '',
       image_url: imageUrl,
       created_by: req.user.username
     }]).select().single();
@@ -164,7 +165,7 @@ router.post('/', adminOnly, upload.single('image'), async (req, res) => {
 router.put('/:id', adminOnly, upload.single('image'), async (req, res) => {
   try {
     const updateData = {};
-    const { name, code, unit, category, branch, brand, isActive, vendor, removeImage } = req.body;
+    const { name, code, unit, category, branch, brand, isActive, vendor, description, removeImage } = req.body;
     
     // Fetch current product to handle old image deletion
     const { data: current, error: getError } = await supabase.from('products').select('*').eq('id', req.params.id).maybeSingle();
@@ -181,6 +182,7 @@ router.put('/:id', adminOnly, upload.single('image'), async (req, res) => {
       updateData.vendor = (vendor === 'null' || !vendor) ? '' : vendor;
     }
     if (brand !== undefined) updateData.brand = brand;
+    if (description !== undefined) updateData.description = description;
 
     if (removeImage === 'true' || removeImage === true) {
       if (current.image_url) {

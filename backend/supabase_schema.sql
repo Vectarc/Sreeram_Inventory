@@ -89,6 +89,7 @@ CREATE TABLE products (
   branch TEXT NOT NULL,
   brand TEXT DEFAULT '',
   vendor TEXT DEFAULT '',
+  description TEXT DEFAULT '',
   image_url TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_by TEXT DEFAULT 'admin',

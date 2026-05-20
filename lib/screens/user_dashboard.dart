@@ -7,6 +7,7 @@ import '../widgets/theme_toggle.dart';
 import '../services/api_service.dart';
 import 'stock_page.dart';
 import 'login_page.dart';
+import 'public_contacts_page.dart';
 
 class UserDashboard extends StatelessWidget {
   final String username;
@@ -190,7 +191,7 @@ class UserDashboard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text('Your Module',
+                Text('Your Modules',
                     style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -273,6 +274,85 @@ class UserDashboard extends StatelessWidget {
                     ),
                     Icon(Icons.arrow_forward_ios,
                         color: AppColors.green, size: 16),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Contacts tile
+            GestureDetector(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const PublicContactsPage())),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.card(isDark),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: AppColors.blue.withOpacity(isDark ? 0.25 : 0.3)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.blue.withOpacity(isDark ? 0.12 : 0.10),
+                      blurRadius: 14,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.blue.withOpacity(isDark ? 0.15 : 0.1),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                            color: AppColors.blue.withOpacity(isDark ? 0.25 : 0.3)),
+                      ),
+                      child: const Icon(Icons.contacts, color: AppColors.blue, size: 30),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('Contacts',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? AppColors.blue
+                                          : AppColors.blue)),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppColors.blue,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text('VIEW ONLY',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 9,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w800)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'View staff, transport, and management contacts across all branches.',
+                            style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: AppColors.textSecondary(isDark),
+                                height: 1.4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward_ios,
+                        color: AppColors.blue, size: 16),
                   ],
                 ),
               ),

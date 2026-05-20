@@ -140,9 +140,11 @@ class _SplashScreenState extends State<SplashScreen>
           MaterialPageRoute(builder: (_) => AdminDashboard(username: username)),
         );
       } else {
+        final branch = await ApiService.getSavedBranch() ?? 'Main Branch';
+        if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => UserDashboard(username: username)),
+          MaterialPageRoute(builder: (_) => UserDashboard(username: username, branch: branch)),
         );
       }
     } else {

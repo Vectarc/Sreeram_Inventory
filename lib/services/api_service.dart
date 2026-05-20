@@ -53,13 +53,17 @@ class ApiService {
     await prefs.remove('auth_token');
     await prefs.remove('user_role');
     await prefs.remove('username');
+    await prefs.remove('branch');
   }
 
   // ── Save user info ──
-  static Future<void> saveUserInfo(String username, String role) async {
+  static Future<void> saveUserInfo(String username, String role, {String? branch}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
     await prefs.setString('user_role', role);
+    if (branch != null) {
+      await prefs.setString('branch', branch);
+    }
   }
 
   static Future<String?> getSavedUsername() async {
@@ -70,6 +74,11 @@ class ApiService {
   static Future<String?> getSavedRole() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('user_role');
+  }
+
+  static Future<String?> getSavedBranch() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('branch');
   }
 
   static Map<String, String> get _headers => {

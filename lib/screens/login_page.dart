@@ -84,13 +84,14 @@ class _LoginPageState extends State<LoginPage>
     if (!mounted) return;
     if (result['success'] == true) {
       await ApiService.setToken(result['token']);
-      await ApiService.saveUserInfo(result['user']['username'], 'user');
+      final branch = result['user']['branch'] ?? 'Main Branch';
+      await ApiService.saveUserInfo(result['user']['username'], 'user', branch: branch);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => UserDashboard(
             username: result['user']['username'],
-            branch: result['user']['branch'] ?? 'Main Branch',
+            branch: branch,
           ),
         ),
       );

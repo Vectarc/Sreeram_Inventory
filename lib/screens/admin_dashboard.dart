@@ -14,6 +14,7 @@ import 'vendor_management_page.dart';
 import 'user_management_page.dart';
 import 'login_page.dart';
 import 'branch_selection_page.dart';
+import 'login_history_page.dart';
 import 'dart:async';
 import '../widgets/app_notifications.dart';
 
@@ -1543,19 +1544,42 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  _tileFullWidth(
-                    context,
-                    isDark,
-                    icon: Icons.manage_accounts_outlined,
-                    label: 'User Management',
-                    sub: 'Create & delete users',
-                    module: 'users',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const UserManagementPage(),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _tile(
+                          context,
+                          isDark,
+                          icon: Icons.manage_accounts_outlined,
+                          label: 'User\nManagement',
+                          sub: 'Create & delete users',
+                          module: 'users',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const UserManagementPage(),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _tile(
+                          context,
+                          isDark,
+                          icon: Icons.history_toggle_off_rounded,
+                          label: 'Login\nHistory',
+                          sub: 'Last 20 user logins',
+                          module: 'history',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginHistoryPage(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

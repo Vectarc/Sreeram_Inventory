@@ -42,10 +42,14 @@ class _HomePageState extends State<HomePage> {
     if (mounted) {
       setState(() {
         if (results[0]['success'] == true) {
-          _branches = List<Map<String, dynamic>>.from(results[0]['branches'] ?? []);
+          _branches = List<Map<String, dynamic>>.from(
+            results[0]['branches'] ?? [],
+          );
         }
         if (results[1]['success'] == true) {
-          final products = List<Map<String, dynamic>>.from(results[1]['products'] ?? []);
+          final products = List<Map<String, dynamic>>.from(
+            results[1]['products'] ?? [],
+          );
           _productCount = products.where((p) => p['isActive'] == true).length;
         }
         if (results[2]['success'] == true) {
@@ -92,33 +96,47 @@ class _HomePageState extends State<HomePage> {
                           builder: (ctx) => GestureDetector(
                             onTap: () => Scaffold.of(ctx).openDrawer(),
                             child: Container(
-                              width: 36, height: 36,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withOpacity(0.07)
                                     : Colors.black.withOpacity(0.06),
                                 borderRadius: BorderRadius.circular(9),
                               ),
-                              child: Icon(Icons.menu,
-                                  color: AppColors.textPrimary(isDark), size: 20),
+                              child: Icon(
+                                Icons.menu,
+                                color: AppColors.textPrimary(isDark),
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Container(
-                          width: 32, height: 32,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(9),
-                            gradient: const SweepGradient(colors: [
-                              AppColors.red, AppColors.orange, AppColors.yellow,
-                              AppColors.green, AppColors.blue, AppColors.violet, AppColors.red,
-                            ]),
+                            gradient: const SweepGradient(
+                              colors: [
+                                AppColors.red,
+                                AppColors.orange,
+                                AppColors.yellow,
+                                AppColors.green,
+                                AppColors.blue,
+                                AppColors.violet,
+                                AppColors.red,
+                              ],
+                            ),
                           ),
                           child: Container(
                             margin: const EdgeInsets.all(3),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
-                              color: isDark ? const Color(0xFF0A0A12) : Colors.white,
+                              color: isDark
+                                  ? const Color(0xFF0A0A12)
+                                  : Colors.white,
                               image: const DecorationImage(
                                 image: AssetImage('assets/logo.png'),
                                 fit: BoxFit.contain,
@@ -128,12 +146,15 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text('SRDC',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                  color: AppColors.textPrimary(isDark),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800)),
+                          child: Text(
+                            'SRDC',
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textPrimary(isDark),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                         ),
                         const Spacer(),
                         const ThemeToggleButton(),
@@ -148,7 +169,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.orange))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.orange),
+            )
           : RefreshIndicator(
               onRefresh: _loadData,
               child: SingleChildScrollView(
@@ -165,8 +188,14 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: isDark
-                                ? [const Color(0xFF0D0D1A), const Color(0xFF1A0A20)]
-                                : [const Color(0xFFFFF8F0), const Color(0xFFF0F4FF)],
+                                ? [
+                                    const Color(0xFF0D0D1A),
+                                    const Color(0xFF1A0A20),
+                                  ]
+                                : [
+                                    const Color(0xFFFFF8F0),
+                                    const Color(0xFFF0F4FF),
+                                  ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -174,33 +203,54 @@ class _HomePageState extends State<HomePage> {
                           border: Border.all(color: AppColors.border(isDark)),
                           boxShadow: isDark
                               ? []
-                              : [BoxShadow(color: AppColors.orange.withOpacity(0.08), blurRadius: 20, offset: const Offset(0, 6))],
+                              : [
+                                  BoxShadow(
+                                    color: AppColors.orange.withOpacity(0.08),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
                         ),
                         child: Stack(
                           clipBehavior: Clip.hardEdge,
                           children: [
                             Positioned(
-                              top: -30, right: -30,
+                              top: -30,
+                              right: -30,
                               child: Container(
-                                width: 120, height: 120,
+                                width: 120,
+                                height: 120,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: SweepGradient(colors: [
-                                    AppColors.red, AppColors.orange, AppColors.yellow,
-                                    AppColors.green, AppColors.blue, AppColors.violet, AppColors.red,
-                                  ]),
+                                  gradient: SweepGradient(
+                                    colors: [
+                                      AppColors.red,
+                                      AppColors.orange,
+                                      AppColors.yellow,
+                                      AppColors.green,
+                                      AppColors.blue,
+                                      AppColors.violet,
+                                      AppColors.red,
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                             Positioned(
-                              top: -30, right: -30,
+                              top: -30,
+                              right: -30,
                               child: Container(
-                                width: 120, height: 120,
+                                width: 120,
+                                height: 120,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: isDark
-                                      ? const Color(0xFF0D0D1A).withOpacity(0.78)
-                                      : const Color(0xFFFFF8F0).withOpacity(0.78),
+                                      ? const Color(
+                                          0xFF0D0D1A,
+                                        ).withOpacity(0.78)
+                                      : const Color(
+                                          0xFFFFF8F0,
+                                        ).withOpacity(0.78),
                                 ),
                               ),
                             ),
@@ -208,19 +258,29 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  width: 56, height: 56,
+                                  width: 56,
+                                  height: 56,
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    gradient: SweepGradient(colors: [
-                                      AppColors.red, AppColors.orange, AppColors.yellow,
-                                      AppColors.green, AppColors.blue, AppColors.violet, AppColors.red,
-                                    ]),
+                                    gradient: SweepGradient(
+                                      colors: [
+                                        AppColors.red,
+                                        AppColors.orange,
+                                        AppColors.yellow,
+                                        AppColors.green,
+                                        AppColors.blue,
+                                        AppColors.violet,
+                                        AppColors.red,
+                                      ],
+                                    ),
                                   ),
                                   child: Container(
                                     margin: const EdgeInsets.all(3),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: isDark ? const Color(0xFF0A0A12) : Colors.white,
+                                      color: isDark
+                                          ? const Color(0xFF0A0A12)
+                                          : Colors.white,
                                       image: const DecorationImage(
                                         image: AssetImage('assets/logo.png'),
                                         fit: BoxFit.contain,
@@ -230,26 +290,44 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 12),
                                 RichText(
-                                  text: TextSpan(children: [
-                                    WidgetSpan(
-                                      child: ShaderMask(
-                                        shaderCallback: (b) => const LinearGradient(
-                                          colors: [Color(0xFFE53935), Color(0xFFFB8C00)],
-                                        ).createShader(b),
-                                        child: Text('SRDC',
+                                  text: TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                        child: ShaderMask(
+                                          shaderCallback: (b) =>
+                                              const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFE53935),
+                                                  Color(0xFFFB8C00),
+                                                ],
+                                              ).createShader(b),
+                                          child: Text(
+                                            'SRDC',
                                             style: GoogleFonts.poppins(
-                                                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ]),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 3),
-                                Text('Est. 1992 · Tirupur, Tamil Nadu',
-                                    style: GoogleFonts.poppins(
-                                        color: AppColors.textSecondary(isDark), fontSize: 10)),
+                                Text(
+                                  'Est. 1992 · Tirupur, Tamil Nadu',
+                                  style: GoogleFonts.poppins(
+                                    color: AppColors.textSecondary(isDark),
+                                    fontSize: 10,
+                                  ),
+                                ),
                                 const SizedBox(height: 10),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 5,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: isDark
                                         ? Colors.white.withOpacity(0.07)
@@ -261,14 +339,17 @@ class _HomePageState extends State<HomePage> {
                                           : AppColors.orange.withOpacity(0.25),
                                     ),
                                   ),
-                                  child: Text('QUALITY · TRUST · SERVICE',
-                                      style: GoogleFonts.poppins(
-                                          color: isDark
-                                              ? Colors.white.withOpacity(0.7)
-                                              : AppColors.orange,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w800,
-                                          letterSpacing: 1.0)),
+                                  child: Text(
+                                    'QUALITY · TRUST · SERVICE',
+                                    style: GoogleFonts.poppins(
+                                      color: isDark
+                                          ? Colors.white.withOpacity(0.7)
+                                          : AppColors.orange,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -284,22 +365,47 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           children: [
                             if (_showProducts)
-                              Expanded(child: _quickCard(context, isDark,
+                              Expanded(
+                                child: _quickCard(
+                                  context,
+                                  isDark,
                                   icon: Icons.inventory_2_outlined,
                                   label: 'Products',
-                                  badge: _productCount > 0 ? '$_productCount' : null,
+                                  badge: _productCount > 0
+                                      ? '$_productCount'
+                                      : null,
                                   accentColor: AppColors.red,
-                                  onTap: () => Navigator.push(context,
-                                      MaterialPageRoute(builder: (_) => const PublicProductsPage())))),
-                            if (_showProducts && _showContacts) const SizedBox(width: 8),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const PublicProductsPage(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (_showProducts && _showContacts)
+                              const SizedBox(width: 8),
                             if (_showContacts)
-                              Expanded(child: _quickCard(context, isDark,
+                              Expanded(
+                                child: _quickCard(
+                                  context,
+                                  isDark,
                                   icon: Icons.contacts_outlined,
                                   label: 'Contacts',
-                                  badge: _contactCount > 0 ? '$_contactCount' : null,
+                                  badge: _contactCount > 0
+                                      ? '$_contactCount'
+                                      : null,
                                   accentColor: AppColors.violet,
-                                  onTap: () => Navigator.push(context,
-                                      MaterialPageRoute(builder: (_) => const PublicContactsPage())))),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const PublicContactsPage(),
+                                    ),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -319,19 +425,23 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('ABOUT US',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.0,
-                                    color: AppColors.textSecondary(isDark))),
+                            Text(
+                              'ABOUT US',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.0,
+                                color: AppColors.textSecondary(isDark),
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'Sree Ram Dyes & Chemicals is a textile screen printing inks company established in Tirupur, Tamil Nadu, India, around the early 1992 by Mr. C. Sharavanan. It began with trading textile-grade screen printing inks, dyes and chemicals and expanded by importing a variety of inks from overseas to serve diverse customer needs.',
                               style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: AppColors.textSecondary(isDark),
-                                  height: 1.65),
+                                fontSize: 11,
+                                color: AppColors.textSecondary(isDark),
+                                height: 1.65,
+                              ),
                             ),
                           ],
                         ),
@@ -343,16 +453,20 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Column(
-                          children: _branches.map((b) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: _branchCard(
-                              isDark: isDark,
-                              emoji: b['isMain'] == true ? '🏬' : '🏪',
-                              name: b['name'] ?? '',
-                              address: b['location'] ?? '',
-                              isMain: b['isMain'] == true,
-                            ),
-                          )).toList(),
+                          children: _branches
+                              .map(
+                                (b) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: _branchCard(
+                                    isDark: isDark,
+                                    emoji: b['isMain'] == true ? '🏬' : '🏪',
+                                    name: b['name'] ?? '',
+                                    address: b['location'] ?? '',
+                                    isMain: b['isMain'] == true,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                     ],
@@ -364,14 +478,32 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: [
                             if ((main['phone'] ?? '').isNotEmpty)
-                              _infoRow(isDark, Icons.phone, AppColors.green, 'Phone', main['phone']),
+                              _infoRow(
+                                isDark,
+                                Icons.phone,
+                                AppColors.green,
+                                'Phone',
+                                main['phone'],
+                              ),
                             if ((main['email'] ?? '').isNotEmpty) ...[
                               const SizedBox(height: 8),
-                              _infoRow(isDark, Icons.email_outlined, AppColors.blue, 'Email', main['email']),
+                              _infoRow(
+                                isDark,
+                                Icons.email_outlined,
+                                AppColors.blue,
+                                'Email',
+                                main['email'],
+                              ),
                             ],
                             if ((main['officeHours'] ?? '').isNotEmpty) ...[
                               const SizedBox(height: 8),
-                              _infoRow(isDark, Icons.access_time, AppColors.violet, 'Business Hours', main['officeHours']),
+                              _infoRow(
+                                isDark,
+                                Icons.access_time,
+                                AppColors.violet,
+                                'Business Hours',
+                                main['officeHours'],
+                              ),
                             ],
                           ],
                         ),
@@ -380,10 +512,17 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 24),
                     Container(
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 14,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.appBarBg(isDark),
-                        border: Border(top: BorderSide(color: AppColors.appBarDivider(isDark))),
+                        border: Border(
+                          top: BorderSide(
+                            color: AppColors.appBarDivider(isDark),
+                          ),
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -395,10 +534,14 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Text('© 2024 SRDC. All Rights Reserved.',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                  color: AppColors.textMuted(isDark), fontSize: 10)),
+                          Text(
+                            '© 2026 SRDC. All Rights Reserved.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textMuted(isDark),
+                              fontSize: 10,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -411,15 +554,20 @@ class _HomePageState extends State<HomePage> {
 
   static Widget _sectionLabel(String text, bool isDark) => Padding(
     padding: const EdgeInsets.fromLTRB(14, 16, 14, 8),
-    child: Text(text,
-        style: GoogleFonts.poppins(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.8,
-            color: AppColors.textMuted(isDark))),
+    child: Text(
+      text,
+      style: GoogleFonts.poppins(
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 1.8,
+        color: AppColors.textMuted(isDark),
+      ),
+    ),
   );
 
-  static Widget _quickCard(BuildContext context, bool isDark, {
+  static Widget _quickCard(
+    BuildContext context,
+    bool isDark, {
     required IconData icon,
     required String label,
     String? badge,
@@ -433,12 +581,20 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: AppColors.cardElevated(isDark),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: isDark
-              ? Colors.white.withOpacity(0.07)
-              : accentColor.withOpacity(0.15)),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.07)
+                : accentColor.withOpacity(0.15),
+          ),
           boxShadow: isDark
               ? []
-              : [BoxShadow(color: accentColor.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 4))],
+              : [
+                  BoxShadow(
+                    color: accentColor.withOpacity(0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: Column(
           children: [
@@ -446,7 +602,8 @@ class _HomePageState extends State<HomePage> {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 42, height: 42,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
                     color: accentColor.withOpacity(isDark ? 0.18 : 0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -456,27 +613,39 @@ class _HomePageState extends State<HomePage> {
                 ),
                 if (badge != null)
                   Positioned(
-                    top: -6, right: -8,
+                    top: -6,
+                    right: -8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: accentColor,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.white, width: 1.5),
                       ),
-                      child: Text(badge,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800)),
+                      child: Text(
+                        badge,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
               ],
             ),
             const SizedBox(height: 9),
-            Text(label,
-                style: GoogleFonts.poppins(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white.withOpacity(0.85) : accentColor)),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white.withOpacity(0.85) : accentColor,
+              ),
+            ),
           ],
         ),
       ),
@@ -510,19 +679,25 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: isMain
-                            ? AppColors.orange
-                            : AppColors.textPrimary(isDark))),
+                Text(
+                  name,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isMain
+                        ? AppColors.orange
+                        : AppColors.textPrimary(isDark),
+                  ),
+                ),
                 const SizedBox(height: 3),
-                Text(address,
-                    style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        color: AppColors.textSecondary(isDark),
-                        height: 1.45)),
+                Text(
+                  address,
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    color: AppColors.textSecondary(isDark),
+                    height: 1.45,
+                  ),
+                ),
               ],
             ),
           ),
@@ -531,7 +706,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  static Widget _infoRow(bool isDark, IconData icon, Color color, String label, String value) {
+  static Widget _infoRow(
+    bool isDark,
+    IconData icon,
+    Color color,
+    String label,
+    String value,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -542,7 +723,8 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           Container(
-            width: 34, height: 34,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(9),
@@ -553,14 +735,21 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style: GoogleFonts.poppins(
-                      fontSize: 10, color: AppColors.textSecondary(isDark))),
-              Text(value,
-                  style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.textPrimary(isDark),
-                      fontWeight: FontWeight.w600)),
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 10,
+                  color: AppColors.textSecondary(isDark),
+                ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: AppColors.textPrimary(isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ],
@@ -581,13 +770,21 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 60, height: 60,
+                  width: 60,
+                  height: 60,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: SweepGradient(colors: [
-                      AppColors.red, AppColors.orange, AppColors.yellow,
-                      AppColors.green, AppColors.blue, AppColors.violet, AppColors.red,
-                    ]),
+                    gradient: SweepGradient(
+                      colors: [
+                        AppColors.red,
+                        AppColors.orange,
+                        AppColors.yellow,
+                        AppColors.green,
+                        AppColors.blue,
+                        AppColors.violet,
+                        AppColors.red,
+                      ],
+                    ),
                   ),
                   child: Container(
                     margin: const EdgeInsets.all(4),
@@ -602,54 +799,115 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text('SRDC',
-                    style: GoogleFonts.poppins(
-                        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                Text(
+                  'SRDC',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: Colors.white30),
                   ),
-                  child: Text('Quality  •  Trust  •  Service',
-                      style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700)),
+                  child: Text(
+                    'Quality  •  Trust  •  Service',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-          Container(height: 3, decoration: const BoxDecoration(gradient: AppColors.rainbow)),
+          Container(
+            height: 3,
+            decoration: const BoxDecoration(gradient: AppColors.rainbow),
+          ),
           const SizedBox(height: 8),
           if (_showProducts)
-            _drawerItem(context, isDark,
-                icon: Icons.inventory_2_outlined, label: 'Products',
-                sub: 'View all active products', color: AppColors.red,
-                onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (_) => const PublicProductsPage())); }),
+            _drawerItem(
+              context,
+              isDark,
+              icon: Icons.inventory_2_outlined,
+              label: 'Products',
+              sub: 'View all active products',
+              color: AppColors.red,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PublicProductsPage()),
+                );
+              },
+            ),
           if (_showContacts)
-            _drawerItem(context, isDark,
-                icon: Icons.contacts_outlined, label: 'Contacts',
-                sub: 'Transport, Staff, Services', color: AppColors.violet,
-                onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (_) => const PublicContactsPage())); }),
-          Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.divider(isDark)),
+            _drawerItem(
+              context,
+              isDark,
+              icon: Icons.contacts_outlined,
+              label: 'Contacts',
+              sub: 'Transport, Staff, Services',
+              color: AppColors.violet,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PublicContactsPage()),
+                );
+              },
+            ),
+          Divider(
+            height: 1,
+            indent: 16,
+            endIndent: 16,
+            color: AppColors.divider(isDark),
+          ),
           const SizedBox(height: 8),
-          _drawerItem(context, isDark,
-              icon: Icons.login, label: 'Login',
-              sub: 'Admin / Staff login', color: AppColors.orange,
-              onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginPage())); }),
+          _drawerItem(
+            context,
+            isDark,
+            icon: Icons.login,
+            label: 'Login',
+            sub: 'Admin / Staff login',
+            color: AppColors.orange,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+              );
+            },
+          ),
           const Spacer(),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('© 2024 SRDC',
-                style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark))),
+            child: Text(
+              '© 2024 SRDC',
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                color: AppColors.textMuted(isDark),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  static Widget _drawerItem(BuildContext context, bool isDark, {
+  static Widget _drawerItem(
+    BuildContext context,
+    bool isDark, {
     required IconData icon,
     required String label,
     required String sub,
@@ -659,15 +917,34 @@ class _HomePageState extends State<HomePage> {
     return ListTile(
       onTap: onTap,
       leading: Container(
-        width: 38, height: 38,
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Icon(icon, color: Colors.white, size: 18),
       ),
-      title: Text(label,
-          style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w700, color: color)),
-      subtitle: Text(sub,
-          style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textSecondary(isDark))),
-      trailing: Icon(Icons.arrow_forward_ios, color: color.withOpacity(0.6), size: 12),
+      title: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
+      ),
+      subtitle: Text(
+        sub,
+        style: GoogleFonts.poppins(
+          fontSize: 10,
+          color: AppColors.textSecondary(isDark),
+        ),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios,
+        color: color.withOpacity(0.6),
+        size: 12,
+      ),
     );
   }
 }

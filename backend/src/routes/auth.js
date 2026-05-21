@@ -114,12 +114,41 @@ router.post('/user/login', async (req, res) => {
 
     const token = generateToken({ id: user.id, username: user.username, role: 'user', branch: user.branch });
 
+    // Record User Login in login_history
+    try {
+      await supabase.from('login_history').insert([{
+        username: user.username,
+        branch: user.branch || 'Main Branch'
+      }]);
+    } catch (dbErr) {
+      console.error('⚠️ Failed to record login history:', dbErr.message);
+    }
+
     res.json({
       success: true,
       message: 'Login successful.',
       token,
       user: mapUserToFrontend(user),
     });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ─────────────────────────────────────────
+// GET USER LOGIN HISTORY (Admin only, last 20 entries)
+// ─────────────────────────────────────────
+router.get('/users/login-history', protect, adminOnly, async (req, res) => {
+  try {
+    const { data: history, error } = await supabase
+      .from('login_history')
+      .select('*')
+      .order('login_time', { ascending: false })
+      .limit(20);
+
+    if (error) throw error;
+
+    res.json({ success: true, count: history.length, history });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

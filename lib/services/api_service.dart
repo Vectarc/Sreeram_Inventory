@@ -635,6 +635,17 @@ class ApiService {
     }
   }
 
+  static Future<Map<String, dynamic>> getUserLoginHistory() async {
+    try {
+      final res = await http
+          .get(Uri.parse('$baseUrl/auth/users/login-history'), headers: _headers)
+          .timeout(const Duration(seconds: 10));
+      return jsonDecode(res.body);
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   static Future<Map<String, dynamic>> createUser(
     Map<String, dynamic> data,
   ) async {

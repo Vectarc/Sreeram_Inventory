@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS branches CASCADE;
 DROP TABLE IF EXISTS vendors CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS admins CASCADE;
+DROP TABLE IF EXISTS login_history CASCADE;
 
 -- 2️⃣ CREATE TABLES FROM SCRATCH
 
@@ -126,6 +127,15 @@ CREATE TABLE transactions (
   created_by TEXT DEFAULT 'admin',
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- Login History (Admins can view last 20 logins)
+CREATE TABLE login_history (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  username TEXT NOT NULL,
+  branch TEXT NOT NULL,
+  login_time TIMESTAMPTZ DEFAULT now()
+);
+
 
 -- 3️⃣ INSERT INITIAL DATA
 

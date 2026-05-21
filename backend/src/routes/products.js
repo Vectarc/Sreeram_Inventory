@@ -118,7 +118,14 @@ router.post('/', adminOnly, upload.single('image'), async (req, res) => {
     if (!name || !code || !unit || !category || !branch)
       return res.status(400).json({ success: false, message: 'name, code, unit, category, and branch are required.' });
     
-    const { data: exists, error: checkError } = await supabase.from('products').select('id').ilike('code', code).eq('branch', branch).maybeSingle();
+    // Only checks if the code exists in the CURRENT branch being added to!
+    const { data: exists, error: checkError } = await supabase
+      .from('products')
+      .select('id')
+      .ilike('code', code)
+      .eq('branch', branch)
+      .maybeSingle();
+
     if (checkError) throw checkError;
     if (exists) return res.status(409).json({ success: false, message: 'Product code already exists in this branch.' });
 
@@ -171,6 +178,28 @@ router.put('/:id', adminOnly, upload.single('image'), async (req, res) => {
     const { data: current, error: getError } = await supabase.from('products').select('*').eq('id', req.params.id).maybeSingle();
     if (getError) throw getError;
     if (!current) return res.status(404).json({ success: false, message: 'Product not found.' });
+
+    // Validate duplicate product code in the target branch if code or branch is changing
+    if (code !== undefined || branch !== undefined) {
+      const checkCode = (code !== undefined ? code : current.code).toUpperCase();
+      const checkBranch = branch !== undefined ? branch : current.branch;
+
+      const { data: exists, error: checkError } = await supabase
+        .from('products')
+        .select('id')
+        .ilike('code', checkCode)
+        .eq('branch', checkBranch)
+        .neq('id', req.params.id)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+      if (exists) {
+        return res.status(409).json({
+          success: false,
+          message: 'Product code already exists in this branch.'
+        });
+      }
+    }
 
     if (name !== undefined) updateData.name = name;
     if (code !== undefined) updateData.code = code.toUpperCase();

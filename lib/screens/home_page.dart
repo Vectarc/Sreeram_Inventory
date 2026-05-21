@@ -147,11 +147,11 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'SRDC',
+                            'SREE RAM DYES & CHEMICALS',
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.poppins(
                               color: AppColors.textPrimary(isDark),
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -302,10 +302,10 @@ class _HomePageState extends State<HomePage> {
                                                 ],
                                               ).createShader(b),
                                           child: Text(
-                                            'SRDC',
+                                            'SREE RAM DYES & CHEMICALS',
                                             style: GoogleFonts.poppins(
                                               color: Colors.white,
-                                              fontSize: 18,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w900,
                                             ),
                                           ),
@@ -535,7 +535,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            '© 2026 SRDC. All Rights Reserved.',
+                            '© 2026 Sree Ram Dyes & Chemicals. All Rights Reserved.',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                               color: AppColors.textMuted(isDark),
@@ -800,10 +800,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'SRDC',
+                  'SREE RAM DYES & CHEMICALS',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -893,9 +893,9 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              '© 2024 SRDC',
+              '© 2024 Sree Ram Dyes & Chemicals',
               style: GoogleFonts.poppins(
-                fontSize: 11,
+                fontSize: 10,
                 color: AppColors.textMuted(isDark),
               ),
             ),

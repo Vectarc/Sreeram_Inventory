@@ -288,10 +288,11 @@ class _LoginPageState extends State<LoginPage>
                   ShaderMask(
                     shaderCallback: (b) => AppColors.rainbow.createShader(b),
                     child: const Text(
-                      'Sree Ram Company',
+                      'SREE RAM DYES & CHEMICALS',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.w800,
                       ),
                     ),

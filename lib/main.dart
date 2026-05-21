@@ -233,12 +233,13 @@ class _SplashScreenState extends State<SplashScreen>
                   ShaderMask(
                     shaderCallback: (b) => AppColors.rainbow.createShader(b),
                     child: Text(
-                      'SRDC',
+                      'SREE RAM DYES & CHEMICALS',
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 16,
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 0.3,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),

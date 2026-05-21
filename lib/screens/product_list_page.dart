@@ -312,7 +312,9 @@ class _ProductListPageState extends State<ProductListPage> {
                                             ),
                                           ),
                                           const SizedBox(height: 4),
-                                          Row(
+                                          Wrap(
+                                            spacing: 6,
+                                            runSpacing: 4,
                                             children: [
                                               if (p['category'] != null)
                                                 _tag(
@@ -320,14 +322,12 @@ class _ProductListPageState extends State<ProductListPage> {
                                                   p['category'],
                                                   AppColors.orange,
                                                 ),
-                                              if (p['shop'] != null) ...[
-                                                const SizedBox(width: 6),
+                                              if (p['shop'] != null)
                                                 _tag(
                                                   isDark,
                                                   p['shop'],
                                                   AppColors.indigo,
                                                 ),
-                                              ],
                                             ],
                                           ),
                                         ],
@@ -354,6 +354,8 @@ class _ProductListPageState extends State<ProductListPage> {
     ),
     child: Text(
       text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
       style: GoogleFonts.poppins(
         fontSize: 10,
         color: color,

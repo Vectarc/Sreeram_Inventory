@@ -1297,6 +1297,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    if (alert['branch'] != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 1),
+                                        child: Text(
+                                          alert['branch'].toString(),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 9.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textSecondary(isDark),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     if (alert['reasons'] != null &&
                                         (alert['reasons'] as List).isNotEmpty)
                                       Padding(

@@ -2,7 +2,7 @@ name: sreeramcompany
 description: "Sree Ram Company"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.2+2
 
 environment:
   sdk: ^3.11.0
@@ -17,6 +17,7 @@ dependencies:
   shared_preferences: ^2.2.2   # ← NEW: saves JWT token across app restarts
   google_fonts: ^6.2.1         # ← Poppins font support
   dropdown_search: ^6.0.2
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:

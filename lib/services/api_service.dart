@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
@@ -17,8 +17,10 @@ class ApiService {
   //   ↑ You MUST deploy the backend to a public server (e.g. Railway, Render,
   //     DigitalOcean) and set this URL to your real HTTPS server URL.
   // ─────────────────────────────────────────────────────────────────
-  static const String baseUrl = 'https://sreeram-inventory.onrender.com/api';
-  //                                     ↑ CHANGE THIS before building release APK!
+  static const String _prodUrl = 'https://sreeram-inventory.onrender.com/api';
+  static const String _devUrl = 'http://localhost:5000/api';
+  static String get baseUrl => kIsWeb ? _devUrl : _prodUrl;
+  
   static String get imageBaseUrl => baseUrl.replaceAll('/api', '');
 
   /// Returns a full URL for an image.

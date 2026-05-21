@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../services/api_service.dart';
 import '../widgets/searchable_dropdown.dart';
 import '../widgets/app_notifications.dart';
+import '../widgets/linkified_text.dart';
 
 class ProductPage extends StatefulWidget {
   final String branch;
@@ -65,18 +66,6 @@ class _ProductPageState extends State<ProductPage> {
     super.dispose();
   }
 
-  final List<String> _categories = [
-    'W/B',
-    'SCREEN MAKING ACCESSORIES',
-    'TPL',
-    'PRINTING ADD ON',
-    'PLASTISOL',
-    'SILICONE',
-    'NON PVC O/B',
-    'O/B',
-    'STICKER',
-    'SPECIAL INKS',
-  ];
   List<String> _units = [];
 
   @override
@@ -121,12 +110,37 @@ class _ProductPageState extends State<ProductPage> {
 
   void _showDialog({Map<String, dynamic>? existing}) {
     final isDark = context.read<ThemeProvider>().isDark;
+
+    // Dynamically extract unique categories for the active branch from its products
+    final branchCategories = _products
+        .map((p) => p['category']?.toString())
+        .where((c) => c != null && c!.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList();
+    branchCategories.sort();
+
+    final categoriesToUse = branchCategories.isNotEmpty
+        ? branchCategories
+        : const [
+            'W/B',
+            'SCREEN MAKING ACCESSORIES',
+            'TPL',
+            'PRINTING ADD ON',
+            'PLASTISOL',
+            'SILICONE',
+            'NON PVC O/B',
+            'O/B',
+            'STICKER',
+            'SPECIAL INKS',
+          ];
+
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     final codeCtrl = TextEditingController(text: existing?['code'] ?? '');
     final brandCtrl = TextEditingController(text: existing?['brand'] ?? '');
     final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     String? unit = existing?['unit'];
-    String? category = existing?['category'] ?? 'PLASTISOL';
+    String? category = existing?['category'] ?? (categoriesToUse.contains('PLASTISOL') ? 'PLASTISOL' : (categoriesToUse.isNotEmpty ? categoriesToUse.first : null));
 
     String? selectedVendorId;
     if (existing != null && existing['vendor'] != null) {
@@ -317,7 +331,7 @@ class _ProductPageState extends State<ProductPage> {
                 SearchableDropdown<String?>(
                   label: 'Category',
                   value: category,
-                  items: _categories,
+                  items: categoriesToUse,
                   itemAsString: (v) => v ?? 'Select Category',
                   onChanged: (v) => ss(() => category = v),
                   isDark: isDark,
@@ -1055,6 +1069,30 @@ class _ProductPageState extends State<ProductPage> {
     final activeCount = _products.where((p) => p['isActive'] == true).length;
     final inactiveCount = _products.length - activeCount;
 
+    // Dynamically extract unique categories for the active branch from its products
+    final branchCategories = _products
+        .map((p) => p['category']?.toString())
+        .where((c) => c != null && c!.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList();
+    branchCategories.sort();
+
+    final categoriesToUse = branchCategories.isNotEmpty
+        ? branchCategories
+        : const [
+            'W/B',
+            'SCREEN MAKING ACCESSORIES',
+            'TPL',
+            'PRINTING ADD ON',
+            'PLASTISOL',
+            'SILICONE',
+            'NON PVC O/B',
+            'O/B',
+            'STICKER',
+            'SPECIAL INKS',
+          ];
+
     return Scaffold(
       backgroundColor: AppColors.bg(isDark),
       appBar: PreferredSize(
@@ -1260,7 +1298,7 @@ class _ProductPageState extends State<ProductPage> {
                                 : 'Inactive',
                           ),
                         ),
-                        ..._categories.map(
+                        ...categoriesToUse.map(
                           (cat) => _filterChip(
                             isDark,
                             cat,
@@ -1735,6 +1773,14 @@ class _ProductPageState extends State<ProductPage> {
                                                           'No Vendor'),
                                               ),
                                               const SizedBox(height: 5),
+                                              _labelRow(
+                                                isDark,
+                                                'Description',
+                                                (p['description'] == null || p['description'].toString().trim().isEmpty)
+                                                    ? '-'
+                                                    : p['description'].toString(),
+                                              ),
+                                              const SizedBox(height: 5),
                                               Row(
                                                 children: [
                                                   SizedBox(
@@ -1916,14 +1962,23 @@ class _ProductPageState extends State<ProductPage> {
         ),
       ),
       Expanded(
-        child: Text(
-          value,
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            color: AppColors.textPrimary(isDark),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: label == 'Description'
+            ? LinkifiedText(
+                text: value,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: AppColors.textPrimary(isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: AppColors.textPrimary(isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     ],
   );
@@ -1937,6 +1992,8 @@ class _ProductPageState extends State<ProductPage> {
     ),
     child: Text(
       text,
+      overflow: TextOverflow.ellipsis,
+      maxLines: 1,
       style: GoogleFonts.poppins(
         fontSize: 10,
         color: color,

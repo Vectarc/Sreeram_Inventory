@@ -68,25 +68,44 @@ router.get('/', async (req, res) => {
 // GET PRODUCTS WITH STOCK INFO (all shops) — must be BEFORE /:id
 router.get('/list/all-shops', async (req, res) => {
   try {
-    let query = supabase.from('stocks').select('*, product:products(*)');
+    let query = supabase.from('stocks').select('*');
     if (req.query.branch) query = query.eq('branch', req.query.branch);
     
     const { data: stocks, error } = await query;
     if (error) throw error;
+
+    // Extract product IDs referenced by these stocks
+    const productIds = [...new Set(stocks.map(s => s.product_id).filter(Boolean))];
+
+    let productMap = {};
+    if (productIds.length > 0) {
+      const { data: products, error: pErr } = await supabase
+        .from('products')
+        .select('*')
+        .in('id', productIds);
+      if (pErr) throw pErr;
+
+      products.forEach(p => {
+        productMap[p.id] = p;
+      });
+    }
     
-    const result = stocks.map(s => ({
-      _id: s.product_id,
-      name: s.product_name,
-      code: s.product?.code,
-      unit: s.unit,
-      category: s.product?.category,
-      brand: s.product?.brand || '',
-      vendor: s.product?.vendor || '',
-      shop: s.branch,
-      quantity: s.quantity,
-      imageUrl: s.product?.image_url,
-      adjustmentAlerts: s.adjustment_alerts || [], 
-    }));
+    const result = stocks.map(s => {
+      const p = productMap[s.product_id] || null;
+      return {
+        _id: s.product_id,
+        name: s.product_name,
+        code: p?.code,
+        unit: s.unit,
+        category: p?.category,
+        brand: p?.brand || '',
+        vendor: p?.vendor || '',
+        shop: s.branch,
+        quantity: s.quantity,
+        imageUrl: p?.image_url,
+        adjustmentAlerts: s.adjustment_alerts || [], 
+      };
+    });
     res.json({ success: true, count: result.length, products: result });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

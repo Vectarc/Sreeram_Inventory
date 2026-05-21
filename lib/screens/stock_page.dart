@@ -28,19 +28,17 @@ class _StockPageState extends State<StockPage>
   bool _loadingTxns = true;
   bool _loadingAlerts = true;
 
-  // Category filter list (same as product_list_page)
-  final List<String> _categories = [
-    'W/B',
-    'SCREEN MAKING ACCESSORIES',
-    'TPL',
-    'PRINTING ADD ON',
-    'PLASTISOL',
-    'SILICONE',
-    'NON PVC O/B',
-    'O/B',
-    'STICKER',
-    'SPECIAL INKS',
-  ];
+  List<Map<String, dynamic>> get _filteredAlerts {
+    return _alerts.where((s) => s['branch'] == widget.branch).toList();
+  }
+
+  List<Map<String, dynamic>> get _filteredTransfers {
+    return _txns.where((t) {
+      if (t['type'] != 'transfer') return false;
+      return t['fromBranch'] == widget.branch || t['toBranch'] == widget.branch;
+    }).toList();
+  }
+
 
   @override
   void initState() {
@@ -178,6 +176,15 @@ class _StockPageState extends State<StockPage>
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, ss) {
+          // Dynamically extract unique categories for the active branch from its products
+          final branchCategories = _allProducts
+              .map((p) => p['category']?.toString())
+              .where((c) => c != null && c!.isNotEmpty)
+              .cast<String>()
+              .toSet()
+              .toList();
+          branchCategories.sort();
+
           final filteredProducts = selectedCategory == null
               ? _allProducts
               : _allProducts
@@ -224,7 +231,7 @@ class _StockPageState extends State<StockPage>
                   SearchableDropdown<String?>(
                     label: 'Category',
                     value: selectedCategory,
-                    items: [null, ..._categories],
+                    items: [null, ...branchCategories],
                     itemAsString: (v) => v ?? 'All Categories',
                     onChanged: (v) => ss(() {
                       selectedCategory = v;
@@ -236,6 +243,7 @@ class _StockPageState extends State<StockPage>
                     }),
                     isDark: isDark,
                     prefixIcon: Icons.category_outlined,
+                    enabled: prefillProduct == null,
                   ),
                   const SizedBox(height: 12),
                   SearchableDropdown<Map<String, dynamic>?>(
@@ -247,7 +255,7 @@ class _StockPageState extends State<StockPage>
                     onChanged: (p) => ss(() => selectedProduct = p),
                     isDark: isDark,
                     prefixIcon: Icons.inventory_2_outlined,
-                    enabled: selectedCategory != null,
+                    enabled: prefillProduct == null && selectedCategory != null,
                   ),
                   if (selectedProduct != null) ...[
                     const SizedBox(height: 8),
@@ -838,8 +846,8 @@ class _StockPageState extends State<StockPage>
                     const Tab(text: 'Stock List'),
                     const Tab(text: 'Transactions'),
                     Tab(
-                      text: _alerts.isNotEmpty
-                          ? 'Alerts (${_alerts.length})'
+                      text: _filteredAlerts.isNotEmpty
+                          ? 'Alerts (${_filteredAlerts.length})'
                           : 'Alerts',
                     ),
                   ],
@@ -1294,7 +1302,7 @@ class _StockPageState extends State<StockPage>
           // TRANSACTIONS
           _loadingTxns
               ? Center(child: CircularProgressIndicator(color: AppColors.green))
-              : _txns.where((t) => t['type'] == 'transfer').isEmpty
+              : _filteredTransfers.isEmpty
               ? Center(
                   child: Text(
                     'No transfer history yet.',
@@ -1307,14 +1315,9 @@ class _StockPageState extends State<StockPage>
                   onRefresh: _loadTransactions,
                   child: ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-                    itemCount: _txns
-                        .where((t) => t['type'] == 'transfer')
-                        .length,
+                    itemCount: _filteredTransfers.length,
                     itemBuilder: (ctx, i) {
-                      final filteredList = _txns
-                          .where((t) => t['type'] == 'transfer')
-                          .toList();
-                      final t = filteredList[i];
+                      final t = _filteredTransfers[i];
                       final color = _typeColor(t['type'] ?? '');
                       final dateStr = t['createdAt'] != null
                           ? t['createdAt']
@@ -1411,7 +1414,7 @@ class _StockPageState extends State<StockPage>
           // ALERTS
           _loadingAlerts
               ? Center(child: CircularProgressIndicator(color: AppColors.green))
-              : _alerts.isEmpty
+              : _filteredAlerts.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1445,9 +1448,9 @@ class _StockPageState extends State<StockPage>
                   onRefresh: _loadAlerts,
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: _alerts.length,
+                    itemCount: _filteredAlerts.length,
                     itemBuilder: (ctx, i) {
-                      final s = _alerts[i];
+                      final s = _filteredAlerts[i];
                       final qty = (s['quantity'] ?? 0).toDouble();
                       final minLevel = (s['minLevel'] ?? 10).toDouble();
                       final isLow = qty <= minLevel;

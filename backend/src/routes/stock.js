@@ -28,14 +28,35 @@ const mapStockToFrontend = (s) => {
 // GET ALL STOCK LEVELS
 router.get('/', async (req, res) => {
   try {
-    let query = supabase.from('stocks').select('*, product:products(id, name, code, category, image_url)').order('product_name', { ascending: true });
+    let query = supabase.from('stocks').select('*').order('product_name', { ascending: true });
     
     if (req.query.branch) query = query.eq('branch', req.query.branch);
     
     const { data: stocks, error } = await query;
     if (error) throw error;
+
+    // Extract product IDs referenced by these stocks
+    const productIds = [...new Set(stocks.map(s => s.product_id).filter(Boolean))];
     
-    res.json({ success: true, count: stocks.length, stocks: stocks.map(mapStockToFrontend) });
+    let productMap = {};
+    if (productIds.length > 0) {
+      const { data: products, error: pErr } = await supabase
+        .from('products')
+        .select('id, name, code, category, image_url')
+        .in('id', productIds);
+      if (pErr) throw pErr;
+
+      products.forEach(p => {
+        productMap[p.id] = p;
+      });
+    }
+
+    const enrichedStocks = stocks.map(s => ({
+      ...s,
+      product: productMap[s.product_id] || null
+    }));
+    
+    res.json({ success: true, count: enrichedStocks.length, stocks: enrichedStocks.map(mapStockToFrontend) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -44,12 +65,32 @@ router.get('/', async (req, res) => {
 // GET LOW STOCK ALERTS
 router.get('/alerts', async (req, res) => {
   try {
-    const { data: all, error } = await supabase.from('stocks').select('*, product:products(id, name, code, category, image_url)');
+    const { data: allStocks, error } = await supabase.from('stocks').select('*');
     if (error) throw error;
+
+    // Extract product IDs referenced by these stocks
+    const productIds = [...new Set(allStocks.map(s => s.product_id).filter(Boolean))];
+    
+    let productMap = {};
+    if (productIds.length > 0) {
+      const { data: products, error: pErr } = await supabase
+        .from('products')
+        .select('id, name, code, category, image_url')
+        .in('id', productIds);
+      if (pErr) throw pErr;
+
+      products.forEach(p => {
+        productMap[p.id] = p;
+      });
+    }
+
+    const all = allStocks.map(s => ({
+      ...s,
+      product: productMap[s.product_id] || null
+    }));
     
     const alerts = all.filter(s =>
-      (s.quantity <= s.min_level) ||
-      (s.adjustment_alerts && s.adjustment_alerts.length > 0)
+      s.quantity <= s.min_level
     );
     
     const enriched = alerts.map(s => {
@@ -84,13 +125,29 @@ router.get('/alerts', async (req, res) => {
 // GET ALL TRANSACTIONS
 router.get('/transactions/all', async (req, res) => {
   try {
-    let query = supabase.from('transactions').select('*, product:products(name, code)').order('created_at', { ascending: false }).limit(200);
+    let query = supabase.from('transactions').select('*').order('created_at', { ascending: false }).limit(200);
     
     if (req.query.type) query = query.eq('type', req.query.type);
     if (req.query.branch) query = query.eq('branch', req.query.branch);
     
     const { data: txns, error } = await query;
     if (error) throw error;
+
+    // Extract product IDs referenced by these transactions
+    const productIds = [...new Set(txns.map(t => t.product_id).filter(Boolean))];
+
+    let productMap = {};
+    if (productIds.length > 0) {
+      const { data: products, error: pErr } = await supabase
+        .from('products')
+        .select('id, name, code')
+        .in('id', productIds);
+      if (pErr) throw pErr;
+
+      products.forEach(p => {
+        productMap[p.id] = p;
+      });
+    }
     
     // map fields for frontend
     const mapped = txns.map(t => ({
@@ -101,6 +158,7 @@ router.get('/transactions/all', async (req, res) => {
       productName: t.product_name,
       fromBranch: t.from_branch,
       toBranch: t.to_branch,
+      product: productMap[t.product_id] || { name: t.product_name, code: '' }
     }));
     
     res.json({ success: true, count: mapped.length, transactions: mapped });
@@ -117,9 +175,19 @@ router.use(protect);
 // GET SINGLE STOCK ITEM
 router.get('/:id', async (req, res) => {
   try {
-    const { data: stock, error } = await supabase.from('stocks').select('*, product:products(id, name, code, category, image_url)').eq('id', req.params.id).maybeSingle();
+    const { data: stock, error } = await supabase.from('stocks').select('*').eq('id', req.params.id).maybeSingle();
     if (error) throw error;
     if (!stock) return res.status(404).json({ success: false, message: 'Stock item not found.' });
+
+    // Fetch product separately
+    const { data: product, error: pErr } = await supabase
+      .from('products')
+      .select('id, name, code, category, image_url')
+      .eq('id', stock.product_id)
+      .maybeSingle();
+    if (pErr) throw pErr;
+
+    stock.product = product;
     
     res.json({ success: true, stock: mapStockToFrontend(stock) });
   } catch (err) {

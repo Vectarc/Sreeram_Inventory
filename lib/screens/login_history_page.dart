@@ -64,7 +64,7 @@ class _LoginHistoryPageState extends State<LoginHistoryPage> {
         preferredSize: const Size.fromHeight(60),
         child: Container(
           decoration: BoxDecoration(
-            gradient: AppColors.rainbow, // Using rainbow gradient directly or Warm
+            gradient: AppColors.gradCool, // Using gradCool blue/violet two-color gradient
             boxShadow: [
               BoxShadow(
                 color: accentColor.withOpacity(0.3),
@@ -231,7 +231,7 @@ class _LoginHistoryPageState extends State<LoginHistoryPage> {
                                     width: 44,
                                     height: 44,
                                     decoration: BoxDecoration(
-                                      gradient: AppColors.rainbow,
+                                      gradient: AppColors.gradCool,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: const Icon(

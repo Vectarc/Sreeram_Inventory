@@ -85,7 +85,7 @@ class AppColors {
       case 'users':
         return blue;
       case 'history':
-        return orange; // or yellow
+        return indigo;
       default:
         return orange;
     }
@@ -108,7 +108,7 @@ class AppColors {
       case 'users':
         return const Color(0xFF90CAF9);
       case 'history':
-        return const Color(0xFFFFCC80);
+        return const Color(0xFF9FA8DA);
       default:
         return const Color(0xFFFFCC80);
     }
@@ -132,7 +132,7 @@ class AppColors {
       case 'users':
         return const Color(0xFF1565C0);
       case 'history':
-        return const Color(0xFFE65100);
+        return const Color(0xFF283593);
       default:
         return const Color(0xFFE65100);
     }

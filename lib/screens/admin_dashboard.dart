@@ -352,15 +352,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ? null
                     : () async {
                         if (currentPassCtrl.text.isEmpty) {
-                          AppNotifications.showWarning(context, 'Please enter current password');
+                          AppNotifications.showWarning(
+                            context,
+                            'Please enter current password',
+                          );
                           return;
                         }
                         if (newPassCtrl.text.length < 6) {
-                          AppNotifications.showWarning(context, 'New password must be at least 6 characters');
+                          AppNotifications.showWarning(
+                            context,
+                            'New password must be at least 6 characters',
+                          );
                           return;
                         }
                         if (newPassCtrl.text != confirmPassCtrl.text) {
-                          AppNotifications.showError(context, 'New password and confirm password do not match');
+                          AppNotifications.showError(
+                            context,
+                            'New password and confirm password do not match',
+                          );
                           return;
                         }
                         ss(() => saving = true);
@@ -371,9 +380,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         ss(() => saving = false);
                         if (res['success'] == true) {
                           Navigator.pop(ctx);
-                          AppNotifications.showSuccess(context, 'Admin password updated!');
+                          AppNotifications.showSuccess(
+                            context,
+                            'Admin password updated!',
+                          );
                         } else {
-                          AppNotifications.showError(context, res['message'] ?? 'Failed to update password');
+                          AppNotifications.showError(
+                            context,
+                            res['message'] ?? 'Failed to update password',
+                          );
                         }
                       },
                 child: saving
@@ -1127,15 +1142,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: isDark 
+                      color: isDark
                           ? Colors.white.withOpacity(0.04)
                           : Colors.black.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: AppColors.border(isDark),
-                      ),
+                      border: Border.all(color: AppColors.border(isDark)),
                     ),
                     child: Row(
                       children: [
@@ -1406,7 +1422,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                           style: GoogleFonts.poppins(
                                             fontSize: 9.5,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColors.textSecondary(isDark),
+                                            color: AppColors.textSecondary(
+                                              isDark,
+                                            ),
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -1540,7 +1558,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ProductPage(branch: _selectedBranch),
+                              builder: (_) =>
+                                  ProductPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1558,7 +1577,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => StockPage(branch: _selectedBranch),
+                                builder: (_) =>
+                                    StockPage(branch: _selectedBranch),
                               ),
                             );
                             _loadAlerts();
@@ -1581,7 +1601,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ProductListPage(branch: _selectedBranch),
+                              builder: (_) =>
+                                  ProductListPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1598,7 +1619,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ContactPage(branch: _selectedBranch),
+                              builder: (_) =>
+                                  ContactPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1625,7 +1647,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 ),
                               ),
                             );
-                            if (updatedBranch != null && updatedBranch != _selectedBranch) {
+                            if (updatedBranch != null &&
+                                updatedBranch != _selectedBranch) {
                               setState(() {
                                 _selectedBranch = updatedBranch;
                               });
@@ -1646,7 +1669,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => VendorManagementPage(branch: _selectedBranch),
+                              builder: (_) =>
+                                  VendorManagementPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1715,7 +1739,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             const SizedBox(height: 10),
             Center(
               child: Text(
-                '© 2024 Sree Ram Dyes & Chemicals',
+                '© 2026 Sree Ram Dyes & Chemicals',
                 style: GoogleFonts.poppins(
                   fontSize: 10,
                   color: AppColors.textMuted(isDark),

@@ -354,7 +354,7 @@ class _AdminBranchSelectionPageState extends State<AdminBranchSelectionPage> {
                                   shaderCallback: (bounds) =>
                                       AppColors.rainbow.createShader(bounds),
                                   child: Text(
-                                    widget.username,
+                                    'SRDC',
                                     style: GoogleFonts.poppins(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w800,

@@ -8,7 +8,8 @@ import '../services/api_service.dart';
 import '../widgets/app_notifications.dart';
 
 class ContactPage extends StatefulWidget {
-  const ContactPage({super.key});
+  final String? branch;
+  const ContactPage({super.key, this.branch});
   @override
   State<ContactPage> createState() => _ContactPageState();
 }
@@ -44,7 +45,7 @@ class _ContactPageState extends State<ContactPage> {
       _loading = true;
       _error = null;
     });
-    final result = await ApiService.getContacts();
+    final result = await ApiService.getContacts(branch: widget.branch);
     setState(() {
       _loading = false;
       if (result['success'] == true) {
@@ -170,7 +171,6 @@ class _ContactPageState extends State<ContactPage> {
             ),
           ),
           actions: [
-            const ThemeToggleButton(),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
@@ -202,6 +202,7 @@ class _ContactPageState extends State<ContactPage> {
                           'email': emailCtrl.text.trim(),
                           'category': category,
                           'description': descCtrl.text.trim(),
+                          if (widget.branch != null) 'branch': widget.branch,
                         };
                         final result = existing == null
                             ? await ApiService.createContact(data)

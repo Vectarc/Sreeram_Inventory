@@ -94,7 +94,7 @@ class _ProductPageState extends State<ProductPage> {
       _error = null;
     });
     final result = await ApiService.getProducts(branch: widget.branch);
-    final vendorRes = await ApiService.getVendors();
+    final vendorRes = await ApiService.getVendors(branch: widget.branch);
     setState(() {
       _loading = false;
       if (result['success'] == true) {
@@ -451,7 +451,6 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           actions: [
-            const ThemeToggleButton(),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(

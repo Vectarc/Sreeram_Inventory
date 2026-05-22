@@ -8,6 +8,7 @@ import 'theme_provider.dart';
 import 'services/api_service.dart';
 import 'screens/home_page.dart';
 import 'screens/admin_dashboard.dart';
+import 'screens/admin_branch_selection_page.dart';
 import 'screens/user_dashboard.dart';
 
 void main() async {
@@ -135,10 +136,26 @@ class _SplashScreenState extends State<SplashScreen>
       final username = await ApiService.getSavedUsername() ?? '';
       if (!mounted) return;
       if (role == 'admin') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => AdminDashboard(username: username)),
-        );
+        final branch = await ApiService.getSavedBranch();
+        if (!mounted) return;
+        if (branch != null && branch.isNotEmpty) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AdminDashboard(
+                username: username,
+                selectedBranch: branch,
+              ),
+            ),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AdminBranchSelectionPage(username: username),
+            ),
+          );
+        }
       } else {
         final branch = await ApiService.getSavedBranch() ?? 'Main Branch';
         if (!mounted) return;

@@ -6,12 +6,7 @@ class LinkifiedText extends StatefulWidget {
   final String text;
   final TextStyle style;
 
-  const LinkifiedText({
-    super.key,
-    required this.text,
-    required this.style,
-  });
-
+  const LinkifiedText({super.key, required this.text, required this.style});
   @override
   State<LinkifiedText> createState() => _LinkifiedTextState();
 }
@@ -41,7 +36,8 @@ class _LinkifiedTextState extends State<LinkifiedText> {
     }
 
     final Uri uri = Uri.parse(formattedUrl);
-    final bool isYouTube = formattedUrl.toLowerCase().contains('youtube.com') ||
+    final bool isYouTube =
+        formattedUrl.toLowerCase().contains('youtube.com') ||
         formattedUrl.toLowerCase().contains('youtu.be');
 
     try {
@@ -58,17 +54,11 @@ class _LinkifiedTextState extends State<LinkifiedText> {
         }
         if (!launchedInApp) {
           // Fallback to external application (browser)
-          await launchUrl(
-            uri,
-            mode: LaunchMode.externalApplication,
-          );
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       } else {
         // Normal web URLs
-        await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
       debugPrint('Error launching URL: $e');
@@ -83,7 +73,7 @@ class _LinkifiedTextState extends State<LinkifiedText> {
   List<TextSpan> _parseText(String text) {
     _clearRecognizers();
     final List<TextSpan> spans = [];
-    
+
     // Pattern to match common web links and specifically youtube URLs without scheme
     final RegExp urlRegExp = RegExp(
       r'(https?:\/\/[^\s]+|www\.[^\s]+|youtube\.com\/[^\s]+|youtu\.be\/[^\s]+)',
@@ -96,10 +86,12 @@ class _LinkifiedTextState extends State<LinkifiedText> {
     for (final RegExpMatch match in matches) {
       // Add text before the URL
       if (match.start > lastMatchEnd) {
-        spans.add(TextSpan(
-          text: text.substring(lastMatchEnd, match.start),
-          style: widget.style,
-        ));
+        spans.add(
+          TextSpan(
+            text: text.substring(lastMatchEnd, match.start),
+            style: widget.style,
+          ),
+        );
       }
 
       final String url = match.group(0)!;
@@ -108,24 +100,25 @@ class _LinkifiedTextState extends State<LinkifiedText> {
       _recognizers.add(recognizer);
 
       // Add clickable URL
-      spans.add(TextSpan(
-        text: url,
-        style: widget.style.copyWith(
-          color: Colors.blue,
-          decoration: TextDecoration.underline,
+      spans.add(
+        TextSpan(
+          text: url,
+          style: widget.style.copyWith(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: recognizer,
         ),
-        recognizer: recognizer,
-      ));
+      );
 
       lastMatchEnd = match.end;
     }
 
     // Add remaining text after the last URL
     if (lastMatchEnd < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(lastMatchEnd),
-        style: widget.style,
-      ));
+      spans.add(
+        TextSpan(text: text.substring(lastMatchEnd), style: widget.style),
+      );
     }
 
     return spans;
@@ -136,11 +129,7 @@ class _LinkifiedTextState extends State<LinkifiedText> {
     if (widget.text.isEmpty) {
       return Text('', style: widget.style);
     }
-    
-    return RichText(
-      text: TextSpan(
-        children: _parseText(widget.text),
-      ),
-    );
+
+    return RichText(text: TextSpan(children: _parseText(widget.text)));
   }
 }

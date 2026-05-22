@@ -92,7 +92,9 @@ class UserDashboard extends StatelessWidget {
                                       color: AppColors.textPrimary(isDark),
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700)),
-                              Text('Welcome, $username',
+                              Text('Welcome, $username ($branch)',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   style: GoogleFonts.poppins(
                                       color: AppColors.textSecondary(isDark),
                                       fontSize: 11)),
@@ -148,18 +150,22 @@ class UserDashboard extends StatelessWidget {
                     child: const Icon(Icons.person, color: Colors.white, size: 28),
                   ),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(username,
-                          style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 16)),
-                      Text('Staff Account',
-                          style: GoogleFonts.poppins(
-                              color: Colors.white70, fontSize: 12)),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(username,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16)),
+                        Text('Staff Account • $branch',
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                                color: Colors.white70, fontSize: 12)),
+                      ],
+                    ),
                   ),
                   const Spacer(),
                   Container(
@@ -239,13 +245,17 @@ class UserDashboard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text('Stock Management',
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w800,
-                                      color: isDark
-                                          ? AppColors.green
-                                          : AppColors.labelForModuleLight('stock'))),
+                              Flexible(
+                                child: Text('Stock Management',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? AppColors.green
+                                            : AppColors.labelForModuleLight('stock'))),
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -282,7 +292,7 @@ class UserDashboard extends StatelessWidget {
             // Contacts tile
             GestureDetector(
               onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const PublicContactsPage())),
+                  MaterialPageRoute(builder: (_) => PublicContactsPage(branch: branch))),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -318,13 +328,17 @@ class UserDashboard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text('Contacts',
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w800,
-                                      color: isDark
-                                          ? AppColors.blue
-                                          : AppColors.blue)),
+                              Flexible(
+                                child: Text('Contacts',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? AppColors.blue
+                                            : AppColors.blue)),
+                              ),
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -342,7 +356,7 @@ class UserDashboard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'View staff, transport, and management contacts across all branches.',
+                            'View staff, transport, and management contacts for $branch.',
                             style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: AppColors.textSecondary(isDark),

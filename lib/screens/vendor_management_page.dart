@@ -8,7 +8,8 @@ import '../widgets/app_notifications.dart';
 import '../services/api_service.dart';
 
 class VendorManagementPage extends StatefulWidget {
-  const VendorManagementPage({super.key});
+  final String? branch;
+  const VendorManagementPage({super.key, this.branch});
   @override
   State<VendorManagementPage> createState() => _VendorManagementPageState();
 }
@@ -25,7 +26,7 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
 
   Future<void> _loadVendors() async {
     setState(() => _loading = true);
-    final result = await ApiService.getVendors();
+    final result = await ApiService.getVendors(branch: widget.branch);
     setState(() {
       _loading = false;
       if (result['success'] == true) {
@@ -106,7 +107,6 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
             ),
           ),
           actions: [
-            const ThemeToggleButton(),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
@@ -132,6 +132,7 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
                           'contactPerson': contactCtrl.text.trim(),
                           'phone': phoneCtrl.text.trim(),
                           'email': emailCtrl.text.trim(),
+                          if (widget.branch != null) 'branch': widget.branch,
                         };
                         final res = existing == null
                             ? await ApiService.createVendor(data)

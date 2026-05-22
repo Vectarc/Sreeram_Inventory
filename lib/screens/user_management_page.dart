@@ -9,7 +9,8 @@ import '../widgets/app_notifications.dart';
 import '../widgets/searchable_dropdown.dart';
 
 class UserManagementPage extends StatefulWidget {
-  const UserManagementPage({super.key});
+  final String? selectedBranchName;
+  const UserManagementPage({super.key, this.selectedBranchName});
   @override
   State<UserManagementPage> createState() => _UserManagementPageState();
 }
@@ -33,6 +34,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
         _branches = (result['branches'] as List)
             .map((b) => b['name'].toString())
             .toList();
+        if (widget.selectedBranchName != null &&
+            !_branches.contains(widget.selectedBranchName)) {
+          _branches.add(widget.selectedBranchName!);
+        }
       });
     }
   }
@@ -43,7 +48,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
     setState(() {
       _loading = false;
       if (result['success'] == true) {
-        _users = List<Map<String, dynamic>>.from(result['users'] ?? []);
+        final allUsers = List<Map<String, dynamic>>.from(result['users'] ?? []);
+        if (widget.selectedBranchName != null) {
+          _users = allUsers
+              .where((u) => u['branch']?.toString().toLowerCase() ==
+                  widget.selectedBranchName!.toLowerCase())
+              .toList();
+        } else {
+          _users = allUsers;
+        }
       }
     });
   }
@@ -52,7 +65,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     final isDark = context.read<ThemeProvider>().isDark;
     final userCtrl = TextEditingController();
     final passCtrl = TextEditingController();
-    String? selectedBranch = _branches.isNotEmpty ? _branches[0] : null;
+    String? selectedBranch = widget.selectedBranchName ?? (_branches.isNotEmpty ? _branches[0] : null);
     bool saving = false;
     bool obscure = true;
 
@@ -142,12 +155,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   onChanged: (v) => ss(() => selectedBranch = v),
                   isDark: isDark,
                   prefixIcon: Icons.storefront_outlined,
+                  enabled: widget.selectedBranchName == null,
                 ),
               ],
             ],
           ),
           actions: [
-            const ThemeToggleButton(),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(

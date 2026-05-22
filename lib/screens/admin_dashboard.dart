@@ -13,14 +13,19 @@ import 'branch_management_page.dart';
 import 'vendor_management_page.dart';
 import 'user_management_page.dart';
 import 'login_page.dart';
-import 'branch_selection_page.dart';
+import 'admin_branch_selection_page.dart';
 import 'login_history_page.dart';
 import 'dart:async';
 import '../widgets/app_notifications.dart';
 
 class AdminDashboard extends StatefulWidget {
   final String username;
-  const AdminDashboard({super.key, required this.username});
+  final String selectedBranch;
+  const AdminDashboard({
+    super.key,
+    required this.username,
+    required this.selectedBranch,
+  });
   @override
   State<AdminDashboard> createState() => _AdminDashboardState();
 }
@@ -28,20 +33,36 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   List<Map<String, dynamic>> _stockAlerts = [];
   bool _alertsLoaded = false;
+  late String _selectedBranch;
 
   @override
   void initState() {
     super.initState();
+    _selectedBranch = widget.selectedBranch;
     _loadAlerts();
   }
 
   Future<void> _loadAlerts() async {
     final res = await ApiService.getStockAlerts();
     if (mounted && res['success'] == true) {
+      final allAlerts = List<Map<String, dynamic>>.from(res['alerts'] ?? []);
       setState(() {
-        _stockAlerts = List<Map<String, dynamic>>.from(res['alerts'] ?? []);
+        _stockAlerts = allAlerts.where((alert) {
+          final alertBranch = alert['branch']?.toString() ?? '';
+          return alertBranch.toLowerCase() == _selectedBranch.toLowerCase();
+        }).toList();
         _alertsLoaded = true;
       });
+    }
+  }
+
+  Future<void> _updateSelectedBranch(String newBranch) async {
+    await ApiService.saveUserInfo(widget.username, 'admin', branch: newBranch);
+    if (mounted) {
+      setState(() {
+        _selectedBranch = newBranch;
+      });
+      _loadAlerts();
     }
   }
 
@@ -1029,7 +1050,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F0F1A) : AppColors.bgLight,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(68),
+        preferredSize: const Size.fromHeight(122),
         child: Container(
           color: AppColors.appBarBg(isDark),
           child: SafeArea(
@@ -1095,6 +1116,86 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                   ? const Color(0xFFEF9A9A)
                                   : const Color(0xFFC62828),
                               size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Branch selection info bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 2, 16, 8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDark 
+                          ? Colors.white.withOpacity(0.04)
+                          : Colors.black.withOpacity(0.03),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: AppColors.border(isDark),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.storefront_rounded,
+                          color: AppColors.orange,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _selectedBranch,
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textPrimary(isDark),
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: () async {
+                            final newBranch = await Navigator.push<String>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => AdminBranchSelectionPage(
+                                  username: widget.username,
+                                  isSwitching: true,
+                                ),
+                              ),
+                            );
+                            if (newBranch != null && newBranch.isNotEmpty) {
+                              await _updateSelectedBranch(newBranch);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: AppColors.gradWarm,
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.orange.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              'Switch',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 10,
+                              ),
                             ),
                           ),
                         ),
@@ -1418,14 +1519,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textMuted(isDark),
-                  letterSpacing: 1.5,
                 ),
               ),
             ),
 
-            // ── Module tiles grid ────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Column(
                 children: [
                   Row(
@@ -1441,11 +1540,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => BranchSelectionPage(
-                                title: 'Products',
-                                isAdmin: true,
-                                builder: (branch) => ProductPage(branch: branch),
-                              ),
+                              builder: (_) => ProductPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1463,11 +1558,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => BranchSelectionPage(
-                                  title: 'Stock Management',
-                                  isAdmin: true,
-                                  builder: (branch) => StockPage(branch: branch),
-                                ),
+                                builder: (_) => StockPage(branch: _selectedBranch),
                               ),
                             );
                             _loadAlerts();
@@ -1490,11 +1581,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => BranchSelectionPage(
-                                title: 'Product List',
-                                isAdmin: true,
-                                builder: (branch) => ProductListPage(branch: branch),
-                              ),
+                              builder: (_) => ProductListPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1511,7 +1598,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ContactPage(),
+                              builder: (_) => ContactPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1529,12 +1616,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           label: 'Branch\nManagement',
                           sub: 'Add, Edit branches',
                           module: 'branches',
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const BranchManagementPage(),
-                            ),
-                          ),
+                          onTap: () async {
+                            final updatedBranch = await Navigator.push<String>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BranchManagementPage(
+                                  selectedBranchName: _selectedBranch,
+                                ),
+                              ),
+                            );
+                            if (updatedBranch != null && updatedBranch != _selectedBranch) {
+                              setState(() {
+                                _selectedBranch = updatedBranch;
+                              });
+                              _loadAlerts();
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -1549,7 +1646,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const VendorManagementPage(),
+                              builder: (_) => VendorManagementPage(branch: _selectedBranch),
                             ),
                           ),
                         ),
@@ -1570,7 +1667,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const UserManagementPage(),
+                              builder: (_) => UserManagementPage(
+                                selectedBranchName: _selectedBranch,
+                              ),
                             ),
                           ),
                         ),
@@ -1587,7 +1686,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const LoginHistoryPage(),
+                              builder: (_) => LoginHistoryPage(
+                                selectedBranchName: _selectedBranch,
+                              ),
                             ),
                           ),
                         ),

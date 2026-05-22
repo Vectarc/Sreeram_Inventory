@@ -19,8 +19,13 @@ router.get('/', async (req, res) => {
     let query = supabase.from('contacts').select('*').order('category').order('name');
     if (req.query.category) query = query.eq('category', req.query.category);
     
-    const { data: contacts, error } = await query;
+    let { data: contacts, error } = await query;
     if (error) throw error;
+
+    if (req.query.branch) {
+      contacts = contacts.filter(c => !c.branch || c.branch.toLowerCase() === req.query.branch.toLowerCase());
+    }
+    
     res.json({ success: true, count: contacts.length, contacts: contacts.map(mapContactToFrontend) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -47,11 +52,14 @@ router.use(protect);
 // CREATE CONTACT
 router.post('/', async (req, res) => {
   try {
-    const { name, role, phone, email, category, description } = req.body;
+    const { name, role, phone, email, category, description, branch } = req.body;
     if (!name || !phone || !category)
       return res.status(400).json({ success: false, message: 'name, phone, and category are required.' });
     
-    const { data: contact, error } = await supabase.from('contacts').insert([{ name, role, phone, email, category, description }]).select().single();
+    const insertPayload = { name, role, phone, email, category, description };
+    if (branch !== undefined) insertPayload.branch = branch;
+    
+    const { data: contact, error } = await supabase.from('contacts').insert([insertPayload]).select().single();
     if (error) throw error;
     res.status(201).json({ success: true, message: 'Contact created.', contact: mapContactToFrontend(contact) });
   } catch (err) {
@@ -63,7 +71,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const updateData = {};
-    const { name, role, phone, email, category, description, isActive } = req.body;
+    const { name, role, phone, email, category, description, isActive, branch } = req.body;
     if (name !== undefined) updateData.name = name;
     if (role !== undefined) updateData.role = role;
     if (phone !== undefined) updateData.phone = phone;
@@ -71,6 +79,7 @@ router.put('/:id', async (req, res) => {
     if (category !== undefined) updateData.category = category;
     if (description !== undefined) updateData.description = description;
     if (isActive !== undefined) updateData.is_active = isActive;
+    if (branch !== undefined) updateData.branch = branch;
     
     const { data: contact, error } = await supabase.from('contacts').update(updateData).eq('id', req.params.id).select().maybeSingle();
     if (error) throw error;

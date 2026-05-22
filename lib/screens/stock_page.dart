@@ -408,7 +408,6 @@ class _StockPageState extends State<StockPage>
               ),
             ),
             actions: [
-              const ThemeToggleButton(),
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
                 child: Text(

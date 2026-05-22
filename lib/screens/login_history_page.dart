@@ -7,7 +7,8 @@ import '../widgets/theme_toggle.dart';
 import '../services/api_service.dart';
 
 class LoginHistoryPage extends StatefulWidget {
-  const LoginHistoryPage({super.key});
+  final String? selectedBranchName;
+  const LoginHistoryPage({super.key, this.selectedBranchName});
 
   @override
   State<LoginHistoryPage> createState() => _LoginHistoryPageState();
@@ -29,7 +30,15 @@ class _LoginHistoryPageState extends State<LoginHistoryPage> {
     setState(() {
       _loading = false;
       if (result['success'] == true) {
-        _history = List<Map<String, dynamic>>.from(result['history'] ?? []);
+        final allHistory = List<Map<String, dynamic>>.from(result['history'] ?? []);
+        if (widget.selectedBranchName != null) {
+          _history = allHistory.where((h) {
+            final branch = h['branch']?.toString() ?? '';
+            return branch.toLowerCase() == widget.selectedBranchName!.toLowerCase();
+          }).toList();
+        } else {
+          _history = allHistory;
+        }
       }
     });
   }
@@ -170,7 +179,9 @@ class _LoginHistoryPageState extends State<LoginHistoryPage> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Showing the last 20 user login activities chronologically.',
+                                  widget.selectedBranchName != null
+                                      ? 'Showing the login activities for ${widget.selectedBranchName} chronologically.'
+                                      : 'Showing the last 20 user login activities chronologically.',
                                   style: GoogleFonts.poppins(
                                     color: AppColors.textSecondary(isDark),
                                     fontSize: 10,

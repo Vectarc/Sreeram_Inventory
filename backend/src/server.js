@@ -33,8 +33,6 @@ app.use('/api/branches', require('./routes/branches'));
 app.use('/api/vendors', require('./routes/vendors'));
 app.use('/api/units', require('./routes/units'));
 
-
-
 // ── Health Check ────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({

@@ -8,7 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 
 class BranchManagementPage extends StatefulWidget {
-  const BranchManagementPage({super.key});
+  final String? selectedBranchName;
+  const BranchManagementPage({super.key, this.selectedBranchName});
   @override
   State<BranchManagementPage> createState() => _BranchManagementPageState();
 }
@@ -16,10 +17,12 @@ class BranchManagementPage extends StatefulWidget {
 class _BranchManagementPageState extends State<BranchManagementPage> {
   List<Map<String, dynamic>> _branches = [];
   bool _loading = true;
+  String? _selectedBranchName;
 
   @override
   void initState() {
     super.initState();
+    _selectedBranchName = widget.selectedBranchName;
     _loadBranches();
   }
 
@@ -29,7 +32,15 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
     setState(() {
       _loading = false;
       if (result['success'] == true) {
-        _branches = List<Map<String, dynamic>>.from(result['branches'] ?? []);
+        final allBranches = List<Map<String, dynamic>>.from(result['branches'] ?? []);
+        if (_selectedBranchName != null) {
+          _branches = allBranches
+              .where((b) => b['name']?.toString().toLowerCase() ==
+                  _selectedBranchName!.toLowerCase())
+              .toList();
+        } else {
+          _branches = allBranches;
+        }
       }
     });
   }
@@ -149,7 +160,6 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
             ),
           ),
           actions: [
-            const ThemeToggleButton(),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
@@ -187,9 +197,22 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
                         ss(() => saving = false);
                         if (res['success'] == true) {
                           Navigator.pop(ctx);
+                          if (existing != null && _selectedBranchName != null &&
+                              existing['name']?.toString().toLowerCase() == _selectedBranchName!.toLowerCase()) {
+                            final newName = nameCtrl.text.trim();
+                            setState(() {
+                              _selectedBranchName = newName;
+                            });
+                            final savedUsername = await ApiService.getSavedUsername();
+                            if (savedUsername != null) {
+                              await ApiService.saveUserInfo(savedUsername, 'admin', branch: newName);
+                            }
+                          }
                           _loadBranches();
                         } else {
-                          AppNotifications.showError(context, res['message'] ?? 'Failed to save branch');
+                          if (mounted) {
+                            AppNotifications.showError(context, res['message'] ?? 'Failed to save branch');
+                          }
                         }
                       },
                 style: ElevatedButton.styleFrom(
@@ -307,7 +330,13 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDark;
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Navigator.pop(context, _selectedBranchName);
+      },
+      child: Scaffold(
       backgroundColor: AppColors.bg(isDark),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -329,7 +358,7 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, _selectedBranchName),
                   ),
                   Expanded(
                     child: Text(
@@ -352,11 +381,13 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showDialog(),
-        backgroundColor: AppColors.teal,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: _selectedBranchName != null
+          ? null
+          : FloatingActionButton(
+              onPressed: () => _showDialog(),
+              backgroundColor: AppColors.teal,
+              child: const Icon(Icons.add, color: Colors.white),
+            ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: AppColors.teal))
           : _branches.isEmpty
@@ -553,14 +584,15 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
                               ),
                               onPressed: () => _showDialog(existing: b),
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                                size: 20,
+                            if (_selectedBranchName == null)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                onPressed: () => _deleteBranch(b['_id']),
                               ),
-                              onPressed: () => _deleteBranch(b['_id']),
-                            ),
                           ],
                         ),
                       ],
@@ -569,6 +601,7 @@ class _BranchManagementPageState extends State<BranchManagementPage> {
                 );
               },
             ),
+      ),
     );
   }
 }

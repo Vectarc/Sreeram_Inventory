@@ -18,8 +18,13 @@ const mapVendorToFrontend = (vendor) => ({
 // Get all vendors
 router.get('/', protect, async (req, res) => {
   try {
-    const { data: vendors, error } = await supabase.from('vendors').select('*').order('name');
+    let { data: vendors, error } = await supabase.from('vendors').select('*').order('name');
     if (error) throw error;
+    
+    if (req.query.branch) {
+      vendors = vendors.filter(v => !v.branch || v.branch.toLowerCase() === req.query.branch.toLowerCase());
+    }
+    
     res.json({ success: true, vendors: vendors.map(mapVendorToFrontend) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

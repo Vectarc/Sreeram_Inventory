@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../services/api_service.dart';
 
 class PublicContactsPage extends StatefulWidget {
-  const PublicContactsPage({super.key});
+  final String? branch;
+  const PublicContactsPage({super.key, this.branch});
   @override
   State<PublicContactsPage> createState() => _PublicContactsPageState();
 }
@@ -26,7 +27,7 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
-    final result = await ApiService.getContacts();
+    final result = await ApiService.getContacts(branch: widget.branch);
     setState(() {
       _loading = false;
       if (result['success'] == true) {

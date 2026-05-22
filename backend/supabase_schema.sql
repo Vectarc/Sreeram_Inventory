@@ -43,6 +43,7 @@ CREATE TABLE vendors (
   phone TEXT,
   email TEXT,
   address TEXT,
+  branch TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -76,6 +77,7 @@ CREATE TABLE contacts (
   category TEXT NOT NULL,
   description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
+  branch TEXT,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );

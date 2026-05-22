@@ -429,11 +429,12 @@ class ApiService {
   // CONTACTS
   // ─────────────────────────────────────────────────────────────────
 
-  static Future<Map<String, dynamic>> getContacts({String? category}) async {
+  static Future<Map<String, dynamic>> getContacts({String? category, String? branch}) async {
     try {
-      final q = category != null
-          ? '?category=${Uri.encodeComponent(category)}'
-          : '';
+      final List<String> queries = [];
+      if (category != null) queries.add('category=${Uri.encodeComponent(category)}');
+      if (branch != null) queries.add('branch=${Uri.encodeComponent(branch)}');
+      final q = queries.isNotEmpty ? '?${queries.join('&')}' : '';
       final res = await http
           .get(Uri.parse('$baseUrl/contacts$q'), headers: _headers)
           .timeout(const Duration(seconds: 10));
@@ -565,10 +566,11 @@ class ApiService {
   // VENDORS
   // ─────────────────────────────────────────────────────────────────
 
-  static Future<Map<String, dynamic>> getVendors() async {
+  static Future<Map<String, dynamic>> getVendors({String? branch}) async {
     try {
+      final q = branch != null ? '?branch=${Uri.encodeComponent(branch)}' : '';
       final res = await http
-          .get(Uri.parse('$baseUrl/vendors'), headers: _headers)
+          .get(Uri.parse('$baseUrl/vendors$q'), headers: _headers)
           .timeout(const Duration(seconds: 10));
       return jsonDecode(res.body);
     } catch (e) {

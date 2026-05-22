@@ -6,6 +6,7 @@ import '../theme_provider.dart';
 import '../widgets/theme_toggle.dart';
 import '../services/api_service.dart';
 import 'admin_dashboard.dart';
+import 'admin_branch_selection_page.dart';
 import 'user_dashboard.dart';
 import 'home_page.dart';
 import 'dart:async';
@@ -61,7 +62,7 @@ class _LoginPageState extends State<LoginPage>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => AdminDashboard(username: result['user']['username']),
+          builder: (_) => AdminBranchSelectionPage(username: result['user']['username']),
         ),
       );
     } else {

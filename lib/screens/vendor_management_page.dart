@@ -43,6 +43,7 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
     );
     final phoneCtrl = TextEditingController(text: existing?['phone'] ?? '');
     final emailCtrl = TextEditingController(text: existing?['email'] ?? '');
+    final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     bool saving = false;
 
     showDialog(
@@ -100,9 +101,18 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
                   AppColors.indigo,
                 ),
                 const SizedBox(height: 12),
-                _tf(isDark, phoneCtrl, 'Phone', Icons.phone, AppColors.green),
+                 _tf(isDark, phoneCtrl, 'Phone', Icons.phone, AppColors.green),
                 const SizedBox(height: 12),
                 _tf(isDark, emailCtrl, 'Email', Icons.email, AppColors.blue),
+                const SizedBox(height: 12),
+                _tf(
+                  isDark,
+                  descCtrl,
+                  'Description',
+                  Icons.description_outlined,
+                  AppColors.orange,
+                  maxLines: null,
+                ),
               ],
             ),
           ),
@@ -127,11 +137,12 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
                     : () async {
                         if (nameCtrl.text.trim().isEmpty) return;
                         ss(() => saving = true);
-                        final data = {
+                         final data = {
                           'name': nameCtrl.text.trim(),
                           'contactPerson': contactCtrl.text.trim(),
                           'phone': phoneCtrl.text.trim(),
                           'email': emailCtrl.text.trim(),
+                          'description': descCtrl.text.trim(),
                           if (widget.branch != null) 'branch': widget.branch,
                         };
                         final res = existing == null
@@ -233,8 +244,11 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
     String label,
     IconData icon,
     Color accent,
+    {int? maxLines = 1}
   ) => TextField(
     controller: c,
+    maxLines: maxLines,
+    keyboardType: maxLines == null ? TextInputType.multiline : TextInputType.text,
     style: TextStyle(color: AppColors.textPrimary(isDark)),
     decoration: InputDecoration(
       labelText: label,
@@ -461,6 +475,29 @@ class _VendorManagementPageState extends State<VendorManagementPage> {
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
                                           color: AppColors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                              if ((v['description'] ?? '').isNotEmpty) ...[
+                                const SizedBox(height: 3),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.description_outlined,
+                                      size: 13,
+                                      color: AppColors.orange,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        v['description'] ?? '',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: AppColors.textSecondary(isDark),
                                         ),
                                       ),
                                     ),

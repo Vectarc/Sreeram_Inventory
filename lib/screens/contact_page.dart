@@ -49,7 +49,18 @@ class _ContactPageState extends State<ContactPage> {
     setState(() {
       _loading = false;
       if (result['success'] == true) {
-        _contacts = List<Map<String, dynamic>>.from(result['contacts'] ?? []);
+        final list = List<Map<String, dynamic>>.from(result['contacts'] ?? []);
+        list.sort((a, b) {
+          final aEmerg = a['isEmergency'] == true ? 1 : 0;
+          final bEmerg = b['isEmergency'] == true ? 1 : 0;
+          if (aEmerg != bEmerg) {
+            return bEmerg.compareTo(aEmerg);
+          }
+          final catComp = (a['category'] ?? '').compareTo(b['category'] ?? '');
+          if (catComp != 0) return catComp;
+          return (a['name'] ?? '').compareTo(b['name'] ?? '');
+        });
+        _contacts = list;
       } else {
         _error = result['message'];
       }
@@ -62,6 +73,9 @@ class _ContactPageState extends State<ContactPage> {
     final roleCtrl = TextEditingController(text: existing?['role'] ?? '');
     final phoneCtrl = TextEditingController(text: existing?['phone'] ?? '');
     final emailCtrl = TextEditingController(text: existing?['email'] ?? '');
+    final bloodGroupCtrl = TextEditingController(text: existing?['bloodGroup'] ?? '');
+    final emergencyPhoneCtrl = TextEditingController(text: existing?['emergencyPhone'] ?? '');
+    bool isEmergency = existing?['isEmergency'] == true;
     final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     String category = existing?['category'] ?? 'Staff';
     final validCats = ['Transport', 'Services', 'Staff', 'Management', 'Import', 'local supplier', 'Non TN Supplier'];
@@ -131,13 +145,70 @@ class _ContactPageState extends State<ContactPage> {
                   AppColors.green,
                 ),
                 const SizedBox(height: 12),
-                _tf(
+                 _tf(
                   isDark,
                   emailCtrl,
                   'Email Address',
                   Icons.email_outlined,
                   AppColors.blue,
                 ),
+                const SizedBox(height: 12),
+                _tf(
+                  isDark,
+                  bloodGroupCtrl,
+                  'Blood Group',
+                  Icons.water_drop_outlined,
+                  AppColors.red,
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Emergency Contact',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary(isDark),
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Pin to top of list and add emergency number',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.textSecondary(isDark),
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: isEmergency,
+                      activeColor: Colors.white,
+                      activeTrackColor: AppColors.red,
+                      onChanged: (val) {
+                        ss(() {
+                          isEmergency = val;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                if (isEmergency) ...[
+                  const SizedBox(height: 12),
+                  _tf(
+                    isDark,
+                    emergencyPhoneCtrl,
+                    'Emergency Contact Number',
+                    Icons.contact_phone_outlined,
+                    AppColors.red,
+                  ),
+                ],
                 const SizedBox(height: 12),
                 _tf(
                   isDark,
@@ -200,6 +271,9 @@ class _ContactPageState extends State<ContactPage> {
                           'role': roleCtrl.text.trim(),
                           'phone': phoneCtrl.text.trim(),
                           'email': emailCtrl.text.trim(),
+                          'bloodGroup': bloodGroupCtrl.text.trim(),
+                          'isEmergency': isEmergency,
+                          'emergencyPhone': isEmergency ? emergencyPhoneCtrl.text.trim() : '',
                           'category': category,
                           'description': descCtrl.text.trim(),
                           if (widget.branch != null) 'branch': widget.branch,
@@ -543,13 +617,15 @@ class _ContactPageState extends State<ContactPage> {
                             itemBuilder: (ctx, i) {
                               final c = _filtered[i];
                               final color = _catColor(c['category'] ?? '');
+                              final bool isEmerg = c['isEmergency'] == true;
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 10),
                                 decoration: BoxDecoration(
                                   color: AppColors.card(isDark),
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: AppColors.border(isDark),
+                                    color: isEmerg ? AppColors.red.withOpacity(0.5) : AppColors.border(isDark),
+                                    width: isEmerg ? 1.5 : 1.0,
                                   ),
                                   boxShadow: isDark
                                       ? []
@@ -665,6 +741,87 @@ class _ContactPageState extends State<ContactPage> {
                                                 AppColors.blue,
                                               ),
                                             ],
+                                            if ((c['bloodGroup'] ?? '').isNotEmpty) ...[
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 90,
+                                                    child: Text(
+                                                      'Blood Group',
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 11,
+                                                        color: AppColors.textMuted(isDark),
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    ': ',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      color: AppColors.textMuted(isDark),
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.water_drop,
+                                                    size: 12,
+                                                    color: AppColors.red,
+                                                  ),
+                                                  const SizedBox(width: 3),
+                                                  Text(
+                                                    c['bloodGroup'] ?? '',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 12,
+                                                      color: AppColors.red,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                            if (isEmerg && (c['emergencyPhone'] ?? '').isNotEmpty) ...[
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 90,
+                                                    child: Text(
+                                                      'Emergency Number',
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 11,
+                                                        color: AppColors.textMuted(isDark),
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    ': ',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 11,
+                                                      color: AppColors.textMuted(isDark),
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.contact_phone,
+                                                    size: 12,
+                                                    color: AppColors.red,
+                                                  ),
+                                                  const SizedBox(width: 3),
+                                                  Flexible(
+                                                    child: Text(
+                                                      c['emergencyPhone'] ?? '',
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 12,
+                                                        color: AppColors.red,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                             const SizedBox(height: 5),
                                             Row(
                                               children: [
@@ -693,37 +850,85 @@ class _ContactPageState extends State<ContactPage> {
                                                   ),
                                                 ),
                                                 Flexible(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 2,
+                                                  child: Wrap(
+                                                    spacing: 6,
+                                                    runSpacing: 4,
+                                                    children: [
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 2,
+                                                            ),
+                                                        decoration: BoxDecoration(
+                                                          color: color.withOpacity(
+                                                            isDark ? 0.18 : 0.1,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                6,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: color
+                                                                .withOpacity(0.3),
+                                                          ),
                                                         ),
-                                                    decoration: BoxDecoration(
-                                                      color: color.withOpacity(
-                                                        isDark ? 0.18 : 0.1,
+                                                        child: Text(
+                                                          c['category'] ?? '',
+                                                          overflow:
+                                                              TextOverflow.ellipsis,
+                                                          style:
+                                                              GoogleFonts.poppins(
+                                                                fontSize: 10,
+                                                                color: color,
+                                                                fontWeight:
+                                                                    FontWeight.w700,
+                                                              ),
+                                                        ),
                                                       ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
+                                                      if (isEmerg)
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 2,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color: AppColors.red.withOpacity(
+                                                              isDark ? 0.18 : 0.1,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  6,
+                                                                ),
+                                                            border: Border.all(
+                                                              color: AppColors.red
+                                                                  .withOpacity(0.3),
+                                                            ),
                                                           ),
-                                                      border: Border.all(
-                                                        color: color
-                                                            .withOpacity(0.3),
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      c['category'] ?? '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                            fontSize: 10,
-                                                            color: color,
-                                                            fontWeight:
-                                                                FontWeight.w700,
+                                                          child: Row(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons.emergency,
+                                                                size: 10,
+                                                                color: AppColors.red,
+                                                              ),
+                                                              const SizedBox(width: 2),
+                                                              Text(
+                                                                'Emergency',
+                                                                style:
+                                                                    GoogleFonts.poppins(
+                                                                      fontSize: 9,
+                                                                      color: AppColors.red,
+                                                                      fontWeight:
+                                                                          FontWeight.w700,
+                                                                    ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                    ),
+                                                        ),
+                                                    ],
                                                   ),
                                                 ),
                                               ],

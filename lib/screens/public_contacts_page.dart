@@ -33,7 +33,18 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
       if (result['success'] == true) {
         final allContacts = List<Map<String, dynamic>>.from(result['contacts'] ?? []);
         final allowed = ['Transport', 'Services', 'Staff', 'Management'];
-        _contacts = allContacts.where((c) => allowed.contains(c['category'])).toList();
+        final list = allContacts.where((c) => allowed.contains(c['category'])).toList();
+        list.sort((a, b) {
+          final aEmerg = a['isEmergency'] == true ? 1 : 0;
+          final bEmerg = b['isEmergency'] == true ? 1 : 0;
+          if (aEmerg != bEmerg) {
+            return bEmerg.compareTo(aEmerg);
+          }
+          final catComp = (a['category'] ?? '').compareTo(b['category'] ?? '');
+          if (catComp != 0) return catComp;
+          return (a['name'] ?? '').compareTo(b['name'] ?? '');
+        });
+        _contacts = list;
       } else {
         _error = result['message'];
       }
@@ -125,12 +136,16 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
                     itemBuilder: (ctx, i) {
                       final c = _filtered[i];
                       final color = _catColor(c['category'] ?? '');
+                      final bool isEmerg = c['isEmergency'] == true;
                       return Container(
                         margin: const EdgeInsets.only(bottom: 10),
                         decoration: BoxDecoration(
                           color: AppColors.card(isDark),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.border(isDark)),
+                          border: Border.all(
+                            color: isEmerg ? AppColors.red.withOpacity(0.5) : AppColors.border(isDark),
+                            width: isEmerg ? 1.5 : 1.0,
+                          ),
                           boxShadow: isDark ? [] : [BoxShadow(color: color.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
                         ),
                         child: Padding(padding: const EdgeInsets.all(14), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -151,16 +166,63 @@ class _PublicContactsPageState extends State<PublicContactsPage> {
                               const SizedBox(width: 3),
                               Flexible(child: Text(c['phone'] ?? '', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: const Color(0xFF2ECC71), fontWeight: FontWeight.w600))),
                             ]),
+                            if ((c['bloodGroup'] ?? '').isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  SizedBox(width: 90, child: Text('Blood Group', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark), fontWeight: FontWeight.w500))),
+                                  Text(': ', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark))),
+                                  const Icon(Icons.water_drop, size: 12, color: AppColors.red),
+                                  const SizedBox(width: 3),
+                                  Text(c['bloodGroup'] ?? '', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.red, fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ],
+                            if (isEmerg && (c['emergencyPhone'] ?? '').isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  SizedBox(width: 90, child: Text('Emergency Number', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark), fontWeight: FontWeight.w500))),
+                                  Text(': ', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark))),
+                                  const Icon(Icons.contact_phone, size: 12, color: AppColors.red),
+                                  const SizedBox(width: 3),
+                                  Flexible(child: Text(c['emergencyPhone'] ?? '', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.red, fontWeight: FontWeight.w600))),
+                                ],
+                              ),
+                            ],
                             const SizedBox(height: 5),
                             Row(children: [
                               SizedBox(width: 90, child: Text('Category', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark), fontWeight: FontWeight.w500))),
                               Text(': ', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textMuted(isDark))),
                               Flexible(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(color: color.withOpacity(isDark ? 0.18 : 0.1), borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: color.withOpacity(0.3))),
-                                  child: Text(c['category'] ?? '', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 10, color: color, fontWeight: FontWeight.w700))),
+                                child: Wrap(
+                                  spacing: 6,
+                                  runSpacing: 4,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(color: color.withOpacity(isDark ? 0.18 : 0.1), borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(color: color.withOpacity(0.3))),
+                                      child: Text(c['category'] ?? '', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 10, color: color, fontWeight: FontWeight.w700))),
+                                    if (isEmerg)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.red.withOpacity(isDark ? 0.18 : 0.1),
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: AppColors.red.withOpacity(0.3)),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.emergency, size: 10, color: AppColors.red),
+                                            const SizedBox(width: 2),
+                                            Text('Emergency', style: GoogleFonts.poppins(fontSize: 9, color: AppColors.red, fontWeight: FontWeight.w700)),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ]),
                             if ((c['description'] ?? '').isNotEmpty) ...[

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { checkConnection } = require('./config/supabase');
 
 const app = express();
@@ -32,6 +33,11 @@ app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/branches', require('./routes/branches'));
 app.use('/api/vendors', require('./routes/vendors'));
 app.use('/api/units', require('./routes/units'));
+
+// ── Privacy Policy ──────────────────────────────────────────────────
+app.get('/privacy', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/privacy.html'));
+});
 
 // ── Health Check ────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

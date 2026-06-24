@@ -144,6 +144,9 @@ The API is fully structured, protected by JWT middleware, and responds with stan
 *   `GET /api/stock/transactions/all` - List historical transactions. Supports `?type=...` and `?branch=...` queries.
 *   `POST /api/stock/transactions` - Logs a new transaction and updates stock levels.
 
+### 🛡️ Public Utility Pages
+*   `GET /privacy` - Serves the responsive public Privacy Policy HTML page required for Google Play and Apple App Store submissions.
+
 ---
 
 ## 🚀 Setup & Installation Instructions

@@ -2,8 +2,7 @@ name: sreeramcompany
 description: "Sree Ram Company"
 publish_to: "none"
 
-version: 1.0.5+5
-
+version: 1.0.6+6
 environment:
   sdk: ^3.11.0
 
